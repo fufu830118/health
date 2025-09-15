@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>健康知識問答系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0a0f1c;
+            --secondary-bg: #1a1f3a;
+            --accent-cyan: #00d9ff;
+            --accent-purple: #7c3aed;
+            --accent-pink: #ec4899;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --glass-bg: rgba(26, 31, 58, 0.4);
+            --border-glow: rgba(0, 217, 255, 0.3);
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "Segoe UI", system-ui, sans-serif;
+            background: var(--primary-bg);
+            background-image:
+                radial-gradient(circle at 25% 25%, #1e293b 0%, transparent 50%),
+                radial-gradient(circle at 75% 25%, #312e81 0%, transparent 50%),
+                radial-gradient(circle at 25% 75%, #1e1b4b 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #0f172a 0%, transparent 50%),
+                linear-gradient(135deg, var(--primary-bg) 0%, #0f1629 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 動態背景粒子效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, var(--accent-cyan), transparent),
+                radial-gradient(2px 2px at 40px 70px, var(--accent-purple), transparent),
+                radial-gradient(1px 1px at 90px 40px, var(--accent-pink), transparent),
+                radial-gradient(1px 1px at 130px 80px, var(--accent-cyan), transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: particleFloat 20s linear infinite;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-200px, -200px) rotate(360deg); }
+        }
+
+        /* 主容器 */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 玻璃態效果容器 */
+        .glass-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+            animation: glowPulse 4s ease-in-out infinite alternate;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        @keyframes glowPulse {
+            0% {
+                box-shadow:
+                    0 8px 32px rgba(0, 0, 0, 0.3),
+                    0 0 40px rgba(0, 217, 255, 0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+            100% {
+                box-shadow:
+                    0 8px 32px rgba(0, 0, 0, 0.3),
+                    0 0 60px rgba(0, 217, 255, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        /* 標題樣式 */
+        .main-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 50%, var(--accent-pink) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 50px rgba(0, 217, 255, 0.3);
+            animation: titleGlow 3s ease-in-out infinite alternate;
+            position: relative;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.3)); }
+            100% { filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.6)); }
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            opacity: 0.8;
+        }
+
+        /* 按鈕容器 */
+        .button-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 900px;
+            margin-top: 2rem;
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 科技風格按鈕 */
+        .category-button {
+            position: relative;
+            padding: 2rem 1.5rem;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            min-height: 140px;
+        }
+
+        .category-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg,
+                rgba(0, 217, 255, 0.1) 0%,
+                rgba(124, 58, 237, 0.1) 50%,
+                rgba(236, 72, 153, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .category-button::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg,
+                var(--accent-cyan) 0%,
+                var(--accent-purple) 50%,
+                var(--accent-pink) 100%);
+            border-radius: 18px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .category-button:hover::before {
+            opacity: 1;
+        }
+
+        .category-button:hover::after {
+            opacity: 0.8;
+        }
+
+        .category-button:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(0, 217, 255, 0.2);
+            border-color: var(--accent-cyan);
+        }
+
+        .category-button:active {
+            transform: translateY(-4px) scale(1.01);
+        }
+
+        /* 按鈕圖標 */
+        .button-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            z-index: 1;
+        }
+
+        .category-button:hover .button-icon {
+            animation: iconPulse 0.6s ease-in-out;
+        }
+
+        @keyframes iconPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* 按鈕文字 */
+        .button-text {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .button-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+                max-width: 400px;
+            }
+
+            .category-button {
+                min-height: 120px;
+                padding: 1.5rem 1rem;
+            }
+
+            .button-icon {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .glass-container {
+                padding: 2rem 1rem;
+                margin: 1rem;
+            }
+
+            .category-button {
+                min-height: 100px;
+                padding: 1rem;
+            }
+
+            .button-icon {
+                font-size: 1.8rem;
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="glass-container">
+            <div class="main-title">健康知識問答</div>
+            <div class="subtitle">選擇您想挑戰的題目類別</div>
+
+            <div class="button-container" id="categoriesContainer">
+                <!-- 按鈕將通過 JavaScript 動態載入 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 類別圖標映射
+        const categoryIcons = {
+            '安全題': 'fas fa-shield-alt',
+            '健康題': 'fas fa-heart',
+            '環境題': 'fas fa-leaf',
+            '環保題': 'fas fa-recycle',
+            '防災題': 'fas fa-exclamation-triangle'
+        };
+
+        // 載入題目類別
+        async function loadCategories() {
+            try {
+                const response = await fetch('/api/categories');
+                const categories = await response.json();
+
+                const container = document.getElementById('categoriesContainer');
+                container.innerHTML = '';
+
+                categories.forEach((category, index) => {
+                    const button = document.createElement('a');
+                    button.href = `/question_display?category=${encodeURIComponent(category)}`;
+                    button.className = 'category-button';
+                    button.style.animationDelay = `${index * 0.1}s`;
+
+                    const icon = categoryIcons[category] || 'fas fa-question-circle';
+
+                    button.innerHTML = `
+                        <i class="${icon} button-icon"></i>
+                        <span class="button-text">${category}</span>
+                    `;
+
+                    container.appendChild(button);
+                });
+            } catch (error) {
+                console.error('載入類別失敗:', error);
+                const container = document.getElementById('categoriesContainer');
+                container.innerHTML = '<p class="text-red-400 text-center">載入題目類別失敗，請重新整理頁面。</p>';
+            }
+        }
+
+        // 頁面載入完成後執行
+        document.addEventListener('DOMContentLoaded', loadCategories);
+    </script>
+</body>
+</html>

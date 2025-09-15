@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>題目已完成</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0a0f1c;
+            --secondary-bg: #1a1f3a;
+            --accent-cyan: #00d9ff;
+            --accent-purple: #7c3aed;
+            --accent-pink: #ec4899;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --glass-bg: rgba(26, 31, 58, 0.4);
+            --border-glow: rgba(0, 217, 255, 0.3);
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "Segoe UI", system-ui, sans-serif;
+            background: var(--primary-bg);
+            background-image:
+                radial-gradient(circle at 25% 25%, #1e293b 0%, transparent 50%),
+                radial-gradient(circle at 75% 25%, #312e81 0%, transparent 50%),
+                radial-gradient(circle at 25% 75%, #1e1b4b 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #0f172a 0%, transparent 50%),
+                linear-gradient(135deg, var(--primary-bg) 0%, #0f1629 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 動態背景粒子效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, var(--accent-cyan), transparent),
+                radial-gradient(2px 2px at 40px 70px, var(--accent-purple), transparent),
+                radial-gradient(1px 1px at 90px 40px, var(--accent-pink), transparent),
+                radial-gradient(1px 1px at 130px 80px, var(--accent-cyan), transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: particleFloat 20s linear infinite;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-200px, -200px) rotate(360deg); }
+        }
+
+        /* 主容器 */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        /* 玻璃態效果容器 */
+        .message-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 3rem 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 1s ease-out, glowPulse 4s ease-in-out infinite alternate 1s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes glowPulse {
+            0% {
+                box-shadow:
+                    0 8px 32px rgba(0, 0, 0, 0.3),
+                    0 0 40px rgba(0, 217, 255, 0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+            100% {
+                box-shadow:
+                    0 8px 32px rgba(0, 0, 0, 0.3),
+                    0 0 60px rgba(0, 217, 255, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        /* 成功圖標 */
+        .icon {
+            font-size: clamp(3rem, 8vw, 5rem);
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            animation: iconGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes iconGlow {
+            0% { filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.3)); }
+            100% { filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.6)); }
+        }
+
+        /* 主標題 */
+        .main-message {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 50%, var(--accent-pink) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.3)); }
+            100% { filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.6)); }
+        }
+
+        /* 副標題 */
+        .sub-message {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.6;
+            opacity: 0.9;
+        }
+
+        /* 按鈕樣式 */
+        .back-button {
+            position: relative;
+            padding: 1.2rem 2rem;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            font-family: "Microsoft JhengHei", "Segoe UI", system-ui, sans-serif;
+        }
+
+        .back-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg,
+                rgba(0, 217, 255, 0.1) 0%,
+                rgba(124, 58, 237, 0.1) 50%,
+                rgba(236, 72, 153, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .back-button::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg,
+                var(--accent-cyan) 0%,
+                var(--accent-purple) 50%,
+                var(--accent-pink) 100%);
+            border-radius: 18px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .back-button:hover::before {
+            opacity: 1;
+        }
+
+        .back-button:hover::after {
+            opacity: 0.8;
+        }
+
+        .back-button:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow:
+                0 15px 30px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(0, 217, 255, 0.2);
+            border-color: var(--accent-cyan);
+        }
+
+        .back-button:active {
+            transform: translateY(-2px) scale(1.01);
+        }
+
+        /* 按鈕圖標和文字 */
+        .back-button i,
+        .back-button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 768px) {
+            .message-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .message-container {
+                padding: 1rem;
+            }
+        }
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .message-container {
+                padding: 2rem 1rem;
+                margin: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .message-container {
+                padding: 1.5rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="message-container">
+            <i class="fas fa-check-circle icon"></i>
+            <div class="main-message">恭喜完成！</div>
+            <div class="sub-message">
+                此類別的所有題目都已完成<br>
+                您可以選擇其他類別繼續挑戰
+            </div>
+            <button class="back-button" onclick="goHome()">
+                <i class="fas fa-home"></i>
+                <span style="margin-left: 0.5rem;">回到主選單</span>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function goHome() {
+            window.location.href = '/';
+        }
+
+        // 添加一些視覺效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 讓圖標有閃爍效果
+            const icon = document.querySelector('.icon');
+            setInterval(() => {
+                icon.style.textShadow = '0 0 30px rgba(66, 153, 225, 0.8)';
+                setTimeout(() => {
+                    icon.style.textShadow = '0 0 20px rgba(66, 153, 225, 0.5)';
+                }, 500);
+            }, 2000);
+        });
+    </script>
+</body>
+</html>

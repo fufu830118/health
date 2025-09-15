@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>問答題目</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #0a0f1c;
+            --secondary-bg: #1a1f3a;
+            --accent-cyan: #00d9ff;
+            --accent-purple: #7c3aed;
+            --accent-pink: #ec4899;
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --glass-bg: rgba(26, 31, 58, 0.4);
+            --border-glow: rgba(0, 217, 255, 0.3);
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "Segoe UI", system-ui, sans-serif;
+            background: var(--primary-bg);
+            background-image:
+                radial-gradient(circle at 25% 25%, #1e293b 0%, transparent 50%),
+                radial-gradient(circle at 75% 25%, #312e81 0%, transparent 50%),
+                radial-gradient(circle at 25% 75%, #1e1b4b 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, #0f172a 0%, transparent 50%),
+                linear-gradient(135deg, var(--primary-bg) 0%, #0f1629 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 動態背景粒子效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                radial-gradient(2px 2px at 20px 30px, var(--accent-cyan), transparent),
+                radial-gradient(2px 2px at 40px 70px, var(--accent-purple), transparent),
+                radial-gradient(1px 1px at 90px 40px, var(--accent-pink), transparent),
+                radial-gradient(1px 1px at 130px 80px, var(--accent-cyan), transparent);
+            background-repeat: repeat;
+            background-size: 200px 200px;
+            animation: particleFloat 20s linear infinite;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(-200px, -200px) rotate(360deg); }
+        }
+
+        /* 主容器 */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 1000px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            justify-content: center;
+        }
+
+        /* 問題容器 */
+        .question-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            padding: 3rem 2rem;
+            position: relative;
+            overflow: hidden;
+            animation: glowPulse 4s ease-in-out infinite alternate;
+            width: 100%;
+            text-align: center;
+        }
+
+        @keyframes glowPulse {
+            0% {
+                box-shadow:
+                    0 8px 32px rgba(0, 0, 0, 0.3),
+                    0 0 40px rgba(0, 217, 255, 0.1),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+            100% {
+                box-shadow:
+                    0 8px 32px rgba(0, 0, 0, 0.3),
+                    0 0 60px rgba(0, 217, 255, 0.2),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            }
+        }
+
+        /* 問題文字 */
+        .question-text {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 50%, var(--accent-pink) 100%);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+            line-height: 1.4;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.3)); }
+            100% { filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.6)); }
+        }
+
+        /* 選項容器 */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        /* 選項按鈕樣式 */
+        .option-btn {
+            position: relative;
+            padding: 1.5rem;
+            border: none;
+            border-radius: 16px;
+            cursor: pointer;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            text-align: left;
+            display: flex;
+            align-items: center;
+        }
+
+        .option-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg,
+                rgba(0, 217, 255, 0.1) 0%,
+                rgba(124, 58, 237, 0.1) 50%,
+                rgba(236, 72, 153, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: 0;
+        }
+
+        .option-btn::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg,
+                var(--accent-cyan) 0%,
+                var(--accent-purple) 50%,
+                var(--accent-pink) 100%);
+            border-radius: 18px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            z-index: -1;
+        }
+
+        .option-btn:hover::before {
+            opacity: 1;
+        }
+
+        .option-btn:hover::after {
+            opacity: 0.8;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow:
+                0 15px 30px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(0, 217, 255, 0.2);
+            border-color: var(--accent-cyan);
+        }
+
+        .option-btn.selected {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            transform: translateY(-4px) scale(1.02);
+            box-shadow:
+                0 15px 30px rgba(0, 0, 0, 0.3),
+                0 0 40px rgba(0, 217, 255, 0.5);
+        }
+
+        .option-btn.selected::before,
+        .option-btn.selected::after {
+            opacity: 0;
+        }
+
+
+        .option-text {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+        }
+
+        /* 倒數計時器 */
+        .countdown-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .countdown-icon {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .countdown-text {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-weight: 600;
+            color: var(--text-primary);
+            min-width: 3rem;
+            text-align: center;
+        }
+
+        .countdown-text.warning {
+            color: var(--warning-color);
+            animation: pulse 1s ease-in-out infinite;
+        }
+
+        .countdown-text.critical {
+            color: var(--danger-color);
+            animation: pulse 0.5s ease-in-out infinite;
+        }
+
+        .countdown-icon.warning {
+            color: var(--warning-color);
+            animation: bounce 1s ease-in-out infinite;
+        }
+
+        .countdown-icon.critical {
+            color: var(--danger-color);
+            animation: bounce 0.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .question-container {
+                padding: 2rem 1rem;
+            }
+
+            .option-btn {
+                padding: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .question-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .option-btn {
+                padding: 1rem;
+            }
+
+            .countdown-wrapper {
+                gap: 0.5rem;
+            }
+        }
+
+        /* 載入動畫 */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 隱藏默認radio */
+        input[type="radio"] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <div class="question-container fade-in">
+            <div class="question-text" id="question-text">載入題目中...</div>
+
+            <div class="options-container" id="options-container">
+                <!-- 選項將通過 JavaScript 動態載入 -->
+            </div>
+
+            <div class="countdown-wrapper">
+                <i class="fas fa-hourglass-half countdown-icon" id="countdown-icon"></i>
+                <div id="countdown-timer" class="countdown-text">30</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 聲音系統
+        class SoundManager {
+            constructor() {
+                this.sounds = {};
+                this.enabled = true;
+                this.audioContext = null;
+                this.initSounds();
+            }
+
+            async initSounds() {
+                try {
+                    // 等待用戶第一次互動後初始化AudioContext
+                    document.addEventListener('click', this.initAudioContext.bind(this), { once: true });
+                    document.addEventListener('touchstart', this.initAudioContext.bind(this), { once: true });
+                } catch (e) {
+                    this.enabled = false;
+                    console.warn('音效系統初始化失敗:', e);
+                }
+            }
+
+            async initAudioContext() {
+                try {
+                    this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+                    // 創建不同類型的音效
+                    this.createSound('click', 800, 0.1, 'sine');
+                    this.createSound('hover', 600, 0.05, 'sine');
+                    this.createSound('tick', 1200, 0.08, 'square');
+                    this.createSound('warning', 523, 0.2, 'sine');
+                    this.createSound('critical', [587, 523, 440], 0.3, 'sine');
+                    this.createSound('timeout', [440, 392, 330], 0.6, 'sine');
+                    this.createSound('success', [523, 659, 784, 988], 0.15, 'sine');
+                    this.createSound('error', [330, 294, 262], 0.08, 'sine');
+                    this.createSound('select', 1000, 0.12, 'triangle');
+                    this.createSound('page-load', [440, 554, 659], 0.4, 'sine');
+                } catch (e) {
+                    this.enabled = false;
+                    console.warn('音效系統初始化失敗:', e);
+                }
+            }
+
+            createSound(name, frequency, duration, type = 'sine') {
+                this.sounds[name] = { frequency, duration, type };
+            }
+
+            play(soundName) {
+                if (!this.enabled || !this.sounds[soundName] || !this.audioContext) return;
+
+                try {
+                    const sound = this.sounds[soundName];
+
+                    if (Array.isArray(sound.frequency)) {
+                        sound.frequency.forEach((freq, index) => {
+                            setTimeout(() => {
+                                this.playTone(freq, sound.duration / sound.frequency.length, sound.type, 0.15);
+                            }, index * 100);
+                        });
+                    } else {
+                        this.playTone(sound.frequency, sound.duration, sound.type, 0.2);
+                    }
+                } catch (e) {
+                    console.warn('音效播放失敗:', e);
+                }
+            }
+
+            playTone(frequency, duration, type = 'sine', volume = 0.1) {
+                if (!this.audioContext) return;
+
+                const oscillator = this.audioContext.createOscillator();
+                const gainNode = this.audioContext.createGain();
+
+                oscillator.connect(gainNode);
+                gainNode.connect(this.audioContext.destination);
+
+                oscillator.frequency.value = frequency;
+                oscillator.type = type;
+
+                gainNode.gain.setValueAtTime(0, this.audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(volume, this.audioContext.currentTime + 0.01);
+                gainNode.gain.linearRampToValueAtTime(0, this.audioContext.currentTime + duration);
+
+                oscillator.start(this.audioContext.currentTime);
+                oscillator.stop(this.audioContext.currentTime + duration);
+            }
+        }
+
+        // 初始化音效管理器
+        const soundManager = new SoundManager();
+
+        // 全局變數
+        let currentQuestionData = null;
+        let currentCategory = '';
+        let countdownInterval;
+
+        // 倒數計時功能
+        function startCountdown(duration) {
+            let timer = duration;
+            const countdownDisplay = document.getElementById('countdown-timer');
+            const countdownIcon = document.getElementById('countdown-icon');
+
+            // 清除所有警告樣式
+            countdownDisplay.classList.remove('warning', 'critical');
+            countdownIcon.classList.remove('warning', 'critical');
+
+            countdownInterval = setInterval(() => {
+                countdownDisplay.textContent = timer;
+
+                // 警告音效和樣式
+                if (timer === 10) {
+                    countdownDisplay.classList.add('warning');
+                    countdownIcon.classList.add('warning');
+                    soundManager.play('warning');
+                } else if (timer === 5) {
+                    countdownDisplay.classList.remove('warning');
+                    countdownDisplay.classList.add('critical');
+                    countdownIcon.classList.remove('warning');
+                    countdownIcon.classList.add('critical');
+                    soundManager.play('critical');
+                } else if (timer <= 3 && timer > 0) {
+                    soundManager.play('tick');
+                }
+
+                if (timer <= 0) {
+                    clearInterval(countdownInterval);
+                    soundManager.play('timeout');
+                    setTimeout(() => {
+                        window.location.href = '/timeout_feedback';
+                    }, 500);
+                }
+
+                timer--;
+            }, 1000);
+        }
+
+        // 載入問題
+        async function loadQuestion() {
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                currentCategory = urlParams.get('category');
+
+                if (!currentCategory) {
+                    document.getElementById('question-text').innerText = '請從主選單選擇一個題目類別。';
+                    document.getElementById('options-container').innerHTML = '';
+                    return;
+                }
+
+                const response = await fetch(`/api/questions?category=${encodeURIComponent(currentCategory)}`);
+                const data = await response.json();
+                console.log('Loaded questions data:', data);
+
+                // 檢查是否沒有更多題目
+                if (data.no_more_questions) {
+                    window.location.href = data.redirect_url;
+                    return;
+                }
+
+                if (!data || Object.keys(data).length === 0 || data.error) {
+                    document.getElementById('question-text').innerText = data.error || '沒有可用的題目。';
+                    document.getElementById('options-container').innerHTML = '';
+                    return;
+                }
+
+                displayQuestion(data);
+                startCountdown(30);
+
+                // 播放載入音效
+                soundManager.play('page-load');
+
+            } catch (error) {
+                console.error('Error loading questions:', error);
+                document.getElementById('question-text').innerHTML = '<p>載入題目失敗。</p>';
+            }
+        }
+
+        // 顯示問題
+        function displayQuestion(questionData) {
+            currentQuestionData = questionData;
+            console.log('Displaying question:', questionData);
+
+            document.getElementById('question-text').innerText = questionData.question;
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+
+            questionData.options.forEach((option, i) => {
+                const optionDiv = document.createElement('div');
+
+                const radioInput = document.createElement('input');
+                radioInput.type = 'radio';
+                radioInput.name = 'option';
+                radioInput.id = `option${i}`;
+                radioInput.value = option;
+
+                const label = document.createElement('label');
+                label.htmlFor = `option${i}`;
+                label.className = 'option-btn';
+
+                label.innerHTML = `
+                    <div class="option-circle"></div>
+                    <span class="option-text">${String.fromCharCode(65 + i)}. ${option}</span>
+                `;
+
+                // 添加事件監聽
+                label.addEventListener('mouseenter', () => {
+                    soundManager.play('hover');
+                });
+
+                label.addEventListener('click', () => {
+                    soundManager.play('select');
+
+                    // 移除其他選項的選中狀態
+                    document.querySelectorAll('.option-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+
+                    // 添加當前選項的選中狀態
+                    label.classList.add('selected');
+                });
+
+                optionDiv.appendChild(radioInput);
+                optionDiv.appendChild(label);
+                optionsContainer.appendChild(optionDiv);
+            });
+
+            // 添加提交按鈕
+            const submitButton = document.createElement('button');
+            submitButton.className = 'option-btn';
+            submitButton.style.background = 'linear-gradient(135deg, var(--success-color), #059669)';
+            submitButton.style.marginTop = '1rem';
+            submitButton.innerHTML = `
+                <i class="fas fa-check" style="margin-right: 0.5rem;"></i>
+                <span>提交答案</span>
+            `;
+
+            submitButton.addEventListener('click', submitAnswer);
+            submitButton.addEventListener('mouseenter', () => {
+                soundManager.play('hover');
+            });
+
+            optionsContainer.appendChild(submitButton);
+        }
+
+        // 提交答案
+        async function submitAnswer() {
+            const selectedOption = document.querySelector('input[name="option"]:checked');
+
+            if (!selectedOption) {
+                alert('請選擇一個答案！');
+                return;
+            }
+
+            clearInterval(countdownInterval);
+
+            const response = await fetch('/api/check_answer', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    question_index: currentQuestionData.question_index,
+                    selected_option: selectedOption.value,
+                    category: currentCategory
+                }),
+            });
+
+            const result = await response.json();
+
+            if (result.redirect_url) {
+                // 根據答案正確性播放音效
+                if (result.is_correct) {
+                    soundManager.play('success');
+                } else {
+                    soundManager.play('error');
+                }
+
+                // 延遲跳轉讓音效播放完畢
+                setTimeout(() => {
+                    window.location.href = result.redirect_url;
+                }, 800);
+            }
+        }
+
+        // 頁面載入完成後執行
+        document.addEventListener('DOMContentLoaded', function() {
+            loadQuestion();
+        });
+    </script>
+</body>
+</html>
