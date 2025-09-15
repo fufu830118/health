@@ -4,39 +4,52 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Application Overview
 
-This is a Chinese health education quiz application built with Flask and HTML/CSS/JavaScript. The application presents categorized health questions with multiple-choice answers and provides immediate feedback. It features a desktop-style interface with a Tkinter launcher and can be packaged as a standalone executable.
+This is a modern Chinese health education quiz application built with Flask and advanced HTML/CSS/JavaScript. The application features a futuristic UI design with glassmorphism effects, Web Audio API sound system, and comprehensive question management through Excel integration.
 
 ## Architecture
 
 ### Backend Structure
-- **Flask Application** (`app.py`): Main server with REST API endpoints and Tkinter GUI launcher
-- **Question Data**: Loaded from Excel file (`問答題庫範本.xlsx`) with structure:
-  - 類別 (Category)
-  - 題目內容 (Question Content)
-  - 選項A/B/C (Options A/B/C)
-  - 正確答案 (Correct Answer: A/B/C)
-- **Session Management**: Tracks asked questions per category to avoid repetition
+- **Flask Application** (`app.py`): Main server with REST API endpoints and console startup mode
+- **Excel-based Question Management**: 
+  - Loads from `問答題庫範本.xlsx` with columns: 類別, 題目內容, 選項A/B/C, 正確答案
+  - Tracks question usage with `出現過` column to prevent repetition
+  - Real-time Excel updates marking questions as used
+  - Smart category reset when all questions exhausted
+- **Advanced Session Management**: Direct Excel tracking instead of Flask sessions for persistence
 
 ### Frontend Structure
-- **Main Menu** (`index.html`): Category selection interface
-- **Question Display** (`question_display.html`): Question presentation with 30-second countdown timer
-- **Feedback Pages**: 
-  - `feedback_correct.html` - Correct answer feedback
-  - `feedback_incorrect.html` - Incorrect answer feedback
-  - `timeout_feedback.html` - Time-out feedback
+- **Futuristic Main Menu** (`index.html`): 
+  - Glassmorphism design with animated particle backgrounds
+  - Dynamic category loading with custom icons (FontAwesome integration)
+  - CSS Grid responsive layout with hover animations
+  - Modern gradient text effects and glow animations
+- **Advanced Question Display** (`question_display.html`):
+  - 30-second countdown timer with visual warnings (10s yellow, 5s red)
+  - Web Audio API sound system generating tones without external files
+  - Interactive option selection with glassmorphism buttons
+  - Real-time visual feedback and animations
+- **Enhanced Feedback System**: 
+  - `feedback_correct.html` - Success feedback with animations
+  - `feedback_incorrect.html` - Incorrect answer feedback  
+  - `timeout_feedback.html` - Time-out handling
+  - `no_more_questions.html` - Category completion notification
 
-### Key Features
-- **Question Randomization**: Questions are randomly selected from categories, avoiding repetition until all questions in a category are exhausted
-- **Countdown Timer**: 30-second timer with visual warning at 10 seconds remaining
-- **Session Persistence**: Flask sessions track which questions have been asked per category
-- **Responsive Design**: Optimized for different screen sizes with Tailwind CSS
-- **Desktop Launcher**: Tkinter interface for starting the web server
+### Modern UI Features
+- **Glassmorphism Design**: Backdrop blur effects with semi-transparent containers
+- **Dynamic Particle Background**: Pure CSS animated floating particles
+- **Web Audio API Sound System**: 
+  - Real-time tone generation (no external audio files)
+  - Context-aware sound effects (tick, warning, success, error)
+  - User interaction-triggered audio context initialization
+- **Advanced Responsive Design**: Mobile-first approach with Tailwind CSS
+- **Smooth Animations**: CSS transitions, transforms, and keyframe animations
 
 ## API Endpoints
 
-- `GET /api/categories` - Returns list of available question categories
-- `GET /api/questions?category={category}` - Returns random question from specified category
-- `POST /api/check_answer` - Validates answer and returns feedback
+- `GET /api/categories` - Returns available question categories
+- `GET /api/questions?category={category}` - Returns random unused question from category
+- `POST /api/check_answer` - Validates answer and returns feedback with redirect
+- `POST /api/clear_session` - Clears session data (legacy support)
 
 ## Common Development Commands
 
@@ -45,66 +58,90 @@ This is a Chinese health education quiz application built with Flask and HTML/CS
 # Install dependencies
 pip install -r requirements.txt
 
-# Run the Flask application with GUI launcher
+# Run Flask application (console mode - recommended)
 python app.py
 
-# Run Flask server directly (development mode)
-python -c "from app import app; app.run(debug=True)"
+# Alternative: Run with GUI launcher (if Tkinter available)
+# The app detects environment and runs console mode by default
 ```
 
-### Using the Batch File
+### Using Batch Files
 ```bash
-# Windows batch file for backend startup (expects virtual environment)
-start_backend.bat
+# Windows batch file for easy startup
+start_health_quiz.bat
 ```
 
 ## File Organization
 
 ### Core Application Files
-- `app.py` - Main Flask application with Tkinter launcher
-- `requirements.txt` - Python dependencies (Flask 2.3.2, openpyxl 3.1.2)
+- `app.py` - Flask application with console startup and Tkinter GUI fallback
+- `requirements.txt` - Python dependencies (Flask 2.3.2, pandas, openpyxl)
+- `問答題庫範本.xlsx` - Excel question database with usage tracking
 
-### Templates (HTML Files)
-All HTML files are located in the root directory and use:
-- Tailwind CSS via CDN
-- Font Awesome icons
-- Microsoft JhengHei font family
-- Dark theme (#1a202c background)
-- Responsive design with mobile breakpoints
+### Modern HTML Templates
+All HTML files use:
+- **Tailwind CSS** via CDN for utility-first styling
+- **FontAwesome 6** for modern icons
+- **Microsoft JhengHei** font for Chinese text rendering
+- **Dark Theme**: Futuristic color scheme with cyan/purple/pink accents
+- **Glassmorphism Effects**: Backdrop filters and transparent designs
+- **CSS Custom Properties**: Centralized theming variables
 
-### Question Database
-- `問答題庫範本.xlsx` - Excel file containing categorized questions
-- Expected columns: 類別, 題目內容, 選項A, 選項B, 選項C, 正確答案
+### Styling Architecture
+- **CSS Variables**: Centralized color and sizing systems
+- **Responsive Breakpoints**: 768px (tablet), 480px (mobile)
+- **Animation System**: Keyframe-based hover effects and transitions
+- **Component-based Styling**: Reusable button and container classes
 
 ## Application Flow
 
-1. **Launch**: Tkinter GUI starts Flask server on port 5000
-2. **Category Selection**: User selects question category from dynamically loaded buttons
-3. **Question Display**: Random question shown with 30-second countdown
-4. **Answer Submission**: User selects answer and submits before timeout
-5. **Feedback**: Appropriate feedback page shown based on correctness
-6. **Return to Menu**: User can return to category selection
+1. **Startup**: Console mode with Flask development server on port 5000
+2. **Category Selection**: Dynamic category buttons with icons and animations
+3. **Question Display**: Random question with 30-second animated countdown
+4. **Audio Feedback**: Web Audio API provides contextual sound effects
+5. **Answer Submission**: Immediate feedback with animated transitions
+6. **Progress Tracking**: Excel-based usage tracking prevents repetition
+7. **Category Completion**: Auto-redirect when all questions answered
 
-## Styling Consistency
+## Technical Implementation Details
 
-The application maintains consistent styling across all pages:
-- **Button Sizes**: 2.5rem font, 1.5rem×2.5rem padding
-- **Large Text**: 4-4.5rem for main titles and messages
-- **Colors**: Green (#4CAF50) for correct/primary, Red (#DC3545) for incorrect, Blue (#4299e1) for neutral
-- **Responsive Breakpoints**: 768px (medium), 480px (small)
+### Sound System Architecture
+- **Web Audio API**: Pure JavaScript tone generation
+- **Sound Types**: click, hover, tick, warning, critical, timeout, success, error
+- **Context Management**: User-initiated audio context for browser compatibility
+- **Progressive Enhancement**: Graceful degradation when audio unavailable
+
+### Excel Integration
+- **openpyxl Library**: Direct Excel file manipulation
+- **Real-time Updates**: Marks questions as used immediately
+- **Error Handling**: Graceful fallback for missing columns or data
+- **Category Management**: Automatic reset when all questions exhausted
+
+### Responsive Design Strategy
+- **Mobile-First**: Base styles optimized for mobile devices
+- **Progressive Enhancement**: Desktop features added via media queries
+- **Touch-Friendly**: Large buttons and touch targets on mobile
+- **Performance**: Optimized animations and transitions
+
+### Deployment Considerations
+- **PyInstaller Ready**: Supports packaging as standalone executable
+- **Path Resolution**: Handles both development and packaged environments
+- **Asset Management**: All assets via CDN for simplified deployment
+- **Cross-Platform**: Windows batch file + Python cross-platform core
 
 ## Development Notes
 
-### Session Management
-Questions are tracked in Flask sessions to prevent immediate repetition. When all questions in a category are exhausted, the session resets for that category.
+### Adding New Question Categories
+1. Add new category to Excel file `類別` column
+2. Ensure FontAwesome icon mapping in `index.html` (optional)
+3. Questions automatically available without code changes
 
-### Executable Packaging
-The application is designed to be packaged with PyInstaller:
-- Uses `sys.frozen` detection for executable vs development paths
-- Template directory path resolution for both modes
-- Question file path resolution for both modes
+### Customizing UI Theme
+- Modify CSS custom properties in `:root` selectors
+- Update Tailwind classes for consistent theming
+- Adjust glassmorphism backdrop-filter values
 
-### Template Directory Configuration
-The Flask app expects templates in a specific structure when packaged:
-- Development: `../design/prototypes/` relative to `app.py`
-- Packaged: `design/prototypes/` within the executable bundle
+### Audio System Modifications
+- Edit `SoundManager` class in `question_display.html`
+- Adjust frequency/duration values for different sound effects
+- Add new sound types by extending the `sounds` object
