@@ -311,17 +311,25 @@
             <div class="button-container" id="categoriesContainer">
                 <!-- 按鈕將通過 JavaScript 動態載入 -->
             </div>
+
+            <!-- 懲罰運動展示入口 -->
+            <div style="margin-top: 2rem; text-align: center;">
+                <a href="/punishment_videos" class="category-button" style="max-width: 400px; margin: 0 auto; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2)); border-color: rgba(239, 68, 68, 0.3);">
+                    <i class="fas fa-dumbbell button-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    <span class="button-text">運動懲罰示範</span>
+                </a>
+            </div>
         </div>
     </div>
 
     <script>
-        // 類別圖標映射
+        // 類別圖標映射（五個主題：環保、安全、衛生、健康、防災）
         const categoryIcons = {
-            '安全題': 'fas fa-shield-alt',
-            '健康題': 'fas fa-heart',
-            '環境題': 'fas fa-leaf',
-            '環保題': 'fas fa-recycle',
-            '防災題': 'fas fa-exclamation-triangle'
+            '環保題': 'fas fa-recycle',           // 環保：回收圖標
+            '安全題': 'fas fa-shield-alt',        // 安全：盾牌圖標
+            '衛生題': 'fas fa-hands-wash',        // 衛生：洗手圖標
+            '健康題': 'fas fa-heartbeat',         // 健康：心跳圖標
+            '防災題': 'fas fa-exclamation-triangle'  // 防災：警告三角形圖標
         };
 
         // 載入題目類別

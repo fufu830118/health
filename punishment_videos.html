@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>運動懲罰示範</title>
+
+    <!-- 引入 Tailwind CSS 框架：用於快速開發響應式設計 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 引入 Font Awesome 圖標庫：提供各種圖標（如啞鈴、播放按鈕等） -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <style>
+        /* ===========================================
+           全域樣式設定
+           =========================================== */
+
+        /* 重置所有元素的 box-sizing 為 border-box，讓寬高計算更直觀 */
+        * {
+            box-sizing: border-box;
+        }
+
+        /* CSS 變數定義：集中管理顏色主題，方便統一修改 */
+        :root {
+            --primary-bg: #0a0f1c;        /* 主要背景色：深藍黑色 */
+            --secondary-bg: #1a1f3a;      /* 次要背景色：深藍色 */
+            --accent-cyan: #00d9ff;       /* 強調色：青色 */
+            --accent-purple: #7c3aed;     /* 強調色：紫色 */
+            --accent-pink: #ec4899;       /* 強調色：粉紅色 */
+            --accent-red: #ef4444;        /* 強調色：紅色（懲罰主題色） */
+            --text-primary: #ffffff;      /* 主要文字顏色：白色 */
+            --text-secondary: #94a3b8;    /* 次要文字顏色：灰藍色 */
+            --glass-bg: rgba(26, 31, 58, 0.4);  /* 玻璃擬態效果背景 */
+        }
+
+        /* ===========================================
+           頁面背景設定
+           =========================================== */
+
+        body {
+            font-family: "Microsoft JhengHei", "Segoe UI", system-ui, sans-serif;  /* 使用微軟正黑體 */
+            background: var(--primary-bg);  /* 使用主要背景色 */
+
+            /* 多層漸層背景：創造深度感和科技感 */
+            background-image:
+                radial-gradient(circle at 25% 25%, #1e293b 0%, transparent 50%),  /* 左上圓形漸層 */
+                radial-gradient(circle at 75% 25%, #312e81 0%, transparent 50%),  /* 右上圓形漸層 */
+                linear-gradient(135deg, var(--primary-bg) 0%, #0f1629 100%);      /* 斜向線性漸層 */
+
+            color: var(--text-primary);     /* 文字顏色為白色 */
+            min-height: 100vh;              /* 最小高度為視窗高度 */
+            margin: 0;                      /* 移除預設邊距 */
+            padding: 0;                     /* 移除預設內距 */
+        }
+
+        /* ===========================================
+           容器佈局
+           =========================================== */
+
+        /* 主要容器：限制最大寬度並居中 */
+        .main-container {
+            position: relative;
+            z-index: 1;                     /* 確保在背景之上 */
+            max-width: 1400px;              /* 最大寬度 1400px */
+            margin: 0 auto;                 /* 水平置中 */
+            padding: 2rem;                  /* 內距 */
+        }
+
+        /* 玻璃擬態容器：模擬毛玻璃效果 */
+        .glass-container {
+            background: var(--glass-bg);           /* 半透明背景 */
+            backdrop-filter: blur(20px);           /* 背景模糊效果（毛玻璃核心） */
+            border-radius: 24px;                   /* 圓角 */
+            border: 1px solid rgba(255, 255, 255, 0.1);  /* 半透明白色邊框 */
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);   /* 陰影增加立體感 */
+            padding: 2.5rem;
+        }
+
+        /* ===========================================
+           標題樣式
+           =========================================== */
+
+        /* 頁面主標題：使用漸層色彩和響應式字體 */
+        .page-title {
+            font-size: clamp(2rem, 5vw, 3rem);  /* 響應式字體：最小 2rem，最大 3rem */
+            font-weight: 800;                   /* 超粗字體 */
+            text-align: center;
+            margin-bottom: 1rem;
+
+            /* 漸層文字效果：紅色到粉紅色 */
+            background: linear-gradient(135deg, var(--accent-red) 0%, var(--accent-pink) 100%);
+            background-clip: text;                        /* 背景裁切為文字形狀 */
+            -webkit-background-clip: text;                /* Safari 兼容 */
+            -webkit-text-fill-color: transparent;         /* 文字填充透明，顯示背景漸層 */
+        }
+
+        /* 副標題 */
+        .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2.5rem;
+            font-size: 1.1rem;
+        }
+
+        /* ===========================================
+           影片網格佈局
+           =========================================== */
+
+        /* CSS Grid 佈局：自動排列影片卡片 */
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));  /* 自動填滿，每格最小 320px */
+            gap: 2rem;                      /* 格子間距 */
+            margin-bottom: 2rem;
+        }
+
+        /* ===========================================
+           影片卡片樣式
+           =========================================== */
+
+        /* 單張影片卡片 */
+        .video-card {
+            background: rgba(30, 41, 59, 0.4);  /* 半透明深色背景 */
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden;                   /* 隱藏溢出內容（讓圓角生效） */
+            transition: all 0.3s ease;          /* 所有屬性平滑過渡 0.3 秒 */
+            cursor: pointer;                    /* 滑鼠指標變成手型 */
+        }
+
+        /* 卡片懸停效果 */
+        .video-card:hover {
+            transform: translateY(-8px);        /* 向上移動 8px */
+            border-color: var(--accent-red);    /* 邊框變紅色 */
+            box-shadow: 0 12px 40px rgba(239, 68, 68, 0.3);  /* 紅色陰影 */
+        }
+
+        /* ===========================================
+           影片縮圖區域
+           =========================================== */
+
+        /* 縮圖容器 */
+        .video-thumbnail {
+            position: relative;     /* 相對定位，讓播放按鈕可以絕對定位 */
+            width: 100%;
+            background: #000;       /* 黑色背景 */
+            aspect-ratio: 16/9;     /* 固定 16:9 比例 */
+        }
+
+        /* 影片元素樣式 */
+        .video-thumbnail video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;      /* 填滿容器並裁切多餘部分 */
+        }
+
+        /* 圖片元素樣式 */
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* ===========================================
+           播放按鈕圖標
+           =========================================== */
+
+        /* 播放圖標：圓形按鈕覆蓋在縮圖上 */
+        .play-icon {
+            position: absolute;                          /* 絕對定位 */
+            top: 50%;                                    /* 距頂部 50% */
+            left: 50%;                                   /* 距左側 50% */
+            transform: translate(-50%, -50%);            /* 向左上移動自身的 50%，實現真正置中 */
+            width: 60px;
+            height: 60px;
+            background: rgba(239, 68, 68, 0.9);         /* 半透明紅色背景 */
+            border-radius: 50%;                          /* 圓形 */
+            display: flex;                               /* Flexbox 佈局 */
+            align-items: center;                         /* 垂直置中 */
+            justify-content: center;                     /* 水平置中 */
+            font-size: 24px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        /* 卡片懸停時播放按鈕放大效果 */
+        .video-card:hover .play-icon {
+            transform: translate(-50%, -50%) scale(1.1);  /* 保持置中並放大 1.1 倍 */
+            background: var(--accent-red);                /* 變為純紅色 */
+        }
+
+        /* ===========================================
+           影片資訊區域
+           =========================================== */
+
+        .video-info {
+            padding: 1.5rem;
+        }
+
+        .video-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .video-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* ===========================================
+           返回按鈕
+           =========================================== */
+
+        .back-button {
+            display: inline-flex;            /* 行內彈性盒子 */
+            align-items: center;             /* 垂直置中 */
+            gap: 0.5rem;                     /* 圖標和文字間距 */
+            padding: 1rem 2rem;
+            background: var(--glass-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: var(--text-primary);
+            text-decoration: none;           /* 移除下劃線 */
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+        }
+
+        /* 按鈕懸停效果 */
+        .back-button:hover {
+            background: rgba(0, 217, 255, 0.2);     /* 青色半透明背景 */
+            border-color: var(--accent-cyan);       /* 青色邊框 */
+            transform: translateX(-5px);            /* 向左移動 5px */
+        }
+
+        /* ===========================================
+           模態視窗（彈出視窗）
+           =========================================== */
+
+        /* 模態視窗容器：全螢幕覆蓋 */
+        .modal {
+            display: none;              /* 預設隱藏 */
+            position: fixed;            /* 固定定位 */
+            top: 0;
+            left: 0;
+            width: 100%;                /* 寬度 100% */
+            height: 100%;               /* 高度 100% */
+            background: rgba(0, 0, 0, 0.9);  /* 90% 透明度的黑色遮罩 */
+            z-index: 1000;              /* 確保在最上層 */
+            align-items: center;        /* Flexbox 垂直置中 */
+            justify-content: center;    /* Flexbox 水平置中 */
+        }
+
+        /* 模態視窗啟用狀態 */
+        .modal.active {
+            display: flex;              /* 顯示並使用 Flexbox */
+        }
+
+        /* 模態視窗內容容器 */
+        .modal-content {
+            position: relative;
+            max-width: 90%;             /* 最大寬度 90% */
+            max-height: 90%;            /* 最大高度 90% */
+            background: var(--secondary-bg);
+            border-radius: 16px;
+            padding: 2rem;
+        }
+
+        /* 模態視窗內的影片 */
+        .modal-video {
+            width: 100%;
+            max-width: 1000px;
+            border-radius: 12px;
+        }
+
+        /* 模態視窗內的圖片 */
+        .modal-image {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 12px;
+        }
+
+        /* 關閉按鈕 */
+        .close-modal {
+            position: absolute;             /* 絕對定位在右上角 */
+            top: 1rem;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            background: var(--accent-red);
+            border: none;
+            border-radius: 50%;             /* 圓形按鈕 */
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        /* 關閉按鈕懸停效果 */
+        .close-modal:hover {
+            transform: rotate(90deg);       /* 旋轉 90 度 */
+        }
+
+        /* ===========================================
+           響應式設計：手機版
+           =========================================== */
+
+        @media (max-width: 768px) {
+            /* 手機版改為單欄佈局 */
+            .video-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            /* 模態視窗內距縮小 */
+            .modal-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="main-container">
+        <div class="glass-container">
+            <!-- 頁面標題 -->
+            <h1 class="page-title">
+                <i class="fas fa-dumbbell"></i> 運動懲罰示範
+            </h1>
+            <p class="subtitle">點擊查看各項運動示範影片與圖片</p>
+
+            <!-- 影片網格容器：由 JavaScript 動態生成內容 -->
+            <div class="video-grid" id="videoGrid">
+                <!-- 影片卡片將由 JavaScript 動態生成 -->
+            </div>
+
+            <!-- 返回按鈕 -->
+            <div style="text-align: center;">
+                <a href="/" class="back-button">
+                    <i class="fas fa-arrow-left"></i>
+                    返回主頁面
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模態視窗：用於全螢幕播放影片或查看圖片 -->
+    <div class="modal" id="mediaModal">
+        <div class="modal-content">
+            <!-- 關閉按鈕 -->
+            <button class="close-modal" onclick="closeModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <!-- 媒體容器：由 JavaScript 動態插入影片或圖片 -->
+            <div id="modalMediaContainer"></div>
+        </div>
+    </div>
+
+    <script>
+        /* ===========================================
+           影片和圖片資料陣列
+           =========================================== */
+
+        // 定義所有運動影片和圖片的資訊
+        const mediaFiles = [
+            {
+                name: '全組開合跳30秒',                     // 顯示名稱
+                file: '全組開合跳30秒.mp4',                // 檔案名稱
+                type: 'video',                             // 類型：影片
+                description: '全身有氧運動，提升心肺功能'   // 說明文字
+            },
+            { name: '弓箭步30秒', file: '弓箭步30秒.mp4', type: 'video', description: '下肢肌力訓練，強化腿部肌群' },
+            { name: '彈力帶30下', file: '彈力帶30下.mp4', type: 'video', description: '阻力訓練，增強肌肉力量' },
+            { name: '拳擊有氧1分鐘', file: '拳擊有氧1分鐘.mp4', type: 'video', description: '高強度有氧，燃燒卡路里' },
+            { name: '棒式20秒', file: '棒式20秒.mp4', type: 'video', description: '核心訓練，增強核心穩定性' },
+            { name: '深蹲15下', file: '深蹲15下.mp4', type: 'video', description: '下肢訓練，強化臀腿肌群' },
+            { name: '高抬腿30秒', file: '高抬腿30秒.mp4', type: 'video', description: '爆發力訓練，提升心肺耐力' },
+            { name: '瑜珈姿勢示範', file: '拍瑜珈型態照片1張.jpg', type: 'image', description: '正確瑜珈姿勢參考' }
+        ];
+
+        /* ===========================================
+           功能函式：生成影片卡片
+           =========================================== */
+
+        /**
+         * 根據 mediaFiles 陣列動態生成所有影片卡片
+         * 這個函式會遍歷所有媒體檔案，為每個檔案創建一張卡片並加入頁面
+         */
+        function generateVideoCards() {
+            // 取得網格容器元素
+            const grid = document.getElementById('videoGrid');
+
+            // 遍歷每個媒體檔案
+            mediaFiles.forEach(media => {
+                // 創建卡片容器
+                const card = document.createElement('div');
+                card.className = 'video-card';                   // 套用 CSS 樣式
+                card.onclick = () => openMedia(media);           // 點擊時開啟模態視窗
+
+                // 根據媒體類型生成不同的縮圖內容
+                const thumbnailContent = media.type === 'video'
+                    ? `<video src="/videos/${media.file}" preload="metadata"></video>`  // 影片：preload="metadata" 載入第一幀作為縮圖
+                    : `<img src="/videos/${media.file}" alt="${media.name}">`;         // 圖片：直接顯示
+
+                // 設定卡片的 HTML 結構
+                card.innerHTML = `
+                    <div class="video-thumbnail">
+                        ${thumbnailContent}
+                        <div class="play-icon">
+                            <i class="fas fa-${media.type === 'video' ? 'play' : 'image'}"></i>
+                        </div>
+                    </div>
+                    <div class="video-info">
+                        <div class="video-title">${media.name}</div>
+                        <div class="video-description">${media.description}</div>
+                    </div>
+                `;
+
+                // 將卡片加入網格容器
+                grid.appendChild(card);
+            });
+        }
+
+        /* ===========================================
+           功能函式：開啟媒體模態視窗
+           =========================================== */
+
+        /**
+         * 開啟全螢幕模態視窗並播放影片或顯示圖片
+         * @param {Object} media - 媒體物件（包含 name, file, type, description）
+         */
+        function openMedia(media) {
+            const modal = document.getElementById('mediaModal');
+            const container = document.getElementById('modalMediaContainer');
+
+            // 根據媒體類型插入不同的 HTML
+            if (media.type === 'video') {
+                // 影片：使用 <video> 標籤，autoplay 自動播放
+                container.innerHTML = `
+                    <video class="modal-video" controls autoplay>
+                        <source src="/videos/${media.file}" type="video/mp4">
+                        您的瀏覽器不支援影片播放。
+                    </video>
+                `;
+            } else {
+                // 圖片：使用 <img> 標籤
+                container.innerHTML = `
+                    <img class="modal-image" src="/videos/${media.file}" alt="${media.name}">
+                `;
+            }
+
+            // 顯示模態視窗（加上 active 類別）
+            modal.classList.add('active');
+        }
+
+        /* ===========================================
+           功能函式：關閉模態視窗
+           =========================================== */
+
+        /**
+         * 關閉模態視窗並清空內容
+         */
+        function closeModal() {
+            const modal = document.getElementById('mediaModal');
+            const container = document.getElementById('modalMediaContainer');
+
+            // 移除 active 類別隱藏模態視窗
+            modal.classList.remove('active');
+
+            // 清空容器內容（停止影片播放）
+            container.innerHTML = '';
+        }
+
+        /* ===========================================
+           事件監聽器設定
+           =========================================== */
+
+        // 點擊模態視窗背景時關閉（點擊內容區域不會關閉）
+        document.getElementById('mediaModal').addEventListener('click', function(e) {
+            if (e.target === this) {  // 只有點擊背景（不是內容）時才關閉
+                closeModal();
+            }
+        });
+
+        // 按下 ESC 鍵時關閉模態視窗
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {  // 檢查是否為 ESC 鍵
+                closeModal();
+            }
+        });
+
+        // 頁面載入完成後自動生成所有影片卡片
+        document.addEventListener('DOMContentLoaded', generateVideoCards);
+    </script>
+</body>
+</html>

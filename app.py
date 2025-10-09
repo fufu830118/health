@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, render_template, session
+from flask import Flask, jsonify, request, render_template, session, send_from_directory
 import pandas as pd
 import os
 import random
@@ -11,8 +11,10 @@ from tkinter import messagebox
 # 建立 Flask app
 if getattr(sys, 'frozen', False):
     template_dir = os.path.join(sys._MEIPASS)
+    video_dir = os.path.join(sys._MEIPASS, '影片')
 else:
     template_dir = os.path.dirname(os.path.abspath(__file__))
+    video_dir = os.path.join(template_dir, '影片')
 
 app = Flask(__name__, template_folder=template_dir)
 app.secret_key = 'your_super_secret_key_here'
@@ -139,6 +141,19 @@ def timeout_feedback():
 @app.route('/no_more_questions')
 def no_more_questions():
     return render_template('no_more_questions.html')
+
+@app.route('/punishment_videos')
+def punishment_videos():
+    return render_template('punishment_videos.html')
+
+@app.route('/videos/<path:filename>')
+def serve_video(filename):
+    """提供影片和圖片檔案服務"""
+    try:
+        return send_from_directory(video_dir, filename)
+    except Exception as e:
+        print(f"Error serving video file: {e}")
+        return jsonify({"error": "File not found"}), 404
 
 @app.route('/api/clear_session', methods=['POST'])
 def clear_session():
