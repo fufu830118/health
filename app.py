@@ -7,17 +7,32 @@ import threading
 import webbrowser
 import tkinter as tk
 from tkinter import messagebox
+import secrets
+from threading import Lock
 
 # 建立 Flask app
 if getattr(sys, 'frozen', False):
     template_dir = os.path.join(sys._MEIPASS)
     video_dir = os.path.join(sys._MEIPASS, '影片')
+    audio_dir = os.path.join(sys._MEIPASS, '音效')
 else:
     template_dir = os.path.dirname(os.path.abspath(__file__))
     video_dir = os.path.join(template_dir, '影片')
+    audio_dir = os.path.join(template_dir, '音效')
 
 app = Flask(__name__, template_folder=template_dir)
-app.secret_key = 'your_super_secret_key_here'
+
+# 安全的 secret_key 生成：從環境變數讀取，若無則生成隨機值
+app.secret_key = os.environ.get('FLASK_SECRET_KEY') or secrets.token_hex(32)
+
+# Excel 檔案鎖定保護（防止並發寫入衝突）
+excel_lock = Lock()
+
+# 允許的影片副檔名（安全白名單）
+ALLOWED_VIDEO_EXTENSIONS = {'.mp4', '.avi', '.mov', '.wmv', '.jpg', '.jpeg', '.png', '.gif'}
+
+# 允許的音效副檔名（安全白名單）
+ALLOWED_AUDIO_EXTENSIONS = {'.mp3', '.wav', '.ogg', '.m4a'}
 
 def load_questions():
     if getattr(sys, 'frozen', False):
@@ -51,25 +66,27 @@ def load_questions():
         sys.exit(1)
 
 def mark_question_as_used(file_path, excel_index):
-    """在Excel中標記題目已被使用"""
-    try:
-        df = pd.read_excel(file_path)
-        df.at[excel_index, '出現過'] = '是'
-        df.to_excel(file_path, index=False)
-        print(f"Marked question at index {excel_index} as used")
-    except Exception as e:
-        print(f"Error marking question as used: {e}")
+    """在Excel中標記題目已被使用（使用檔案鎖定防止並發問題）"""
+    with excel_lock:
+        try:
+            df = pd.read_excel(file_path)
+            df.at[excel_index, '出現過'] = '是'
+            df.to_excel(file_path, index=False)
+            print(f"Marked question at index {excel_index} as used")
+        except Exception as e:
+            print(f"Error marking question as used: {e}")
 
 def reset_category_marks(file_path, category):
-    """重置某個類別的所有標記"""
-    try:
-        df = pd.read_excel(file_path)
-        category_mask = df['類別'] == category
-        df.loc[category_mask, '出現過'] = None
-        df.to_excel(file_path, index=False)
-        print(f"Reset all marks for category: {category}")
-    except Exception as e:
-        print(f"Error resetting category marks: {e}")
+    """重置某個類別的所有標記（使用檔案鎖定防止並發問題）"""
+    with excel_lock:
+        try:
+            df = pd.read_excel(file_path)
+            category_mask = df['類別'] == category
+            df.loc[category_mask, '出現過'] = None
+            df.to_excel(file_path, index=False)
+            print(f"Reset all marks for category: {category}")
+        except Exception as e:
+            print(f"Error resetting category marks: {e}")
 
 all_categorized_questions, excel_file_path = load_questions()
 
@@ -91,32 +108,33 @@ incorrect_messages = [
 ]
 
 def load_questions_fresh_from_excel(category):
-    """直接從Excel重新載入指定類別的題目，獲取最新的'出現過'狀態"""
-    try:
-        df = pd.read_excel(excel_file_path)
+    """直接從Excel重新載入指定類別的題目，獲取最新的'出現過'狀態（使用檔案鎖定）"""
+    with excel_lock:
+        try:
+            df = pd.read_excel(excel_file_path)
 
-        # 確保'出現過'欄位存在
-        if '出現過' not in df.columns:
-            df['出現過'] = ''
+            # 確保'出現過'欄位存在
+            if '出現過' not in df.columns:
+                df['出現過'] = ''
 
-        questions = []
-        category_questions = df[df['類別'] == category]
+            questions = []
+            category_questions = df[df['類別'] == category]
 
-        for index, row in category_questions.iterrows():
-            question_data = {
-                "category": row['類別'],
-                "question": row['題目內容'],
-                "options": [row['選項A'], row['選項B'], row['選項C']],
-                "correct_answer": row['正確答案'],
-                "appeared": row['出現過'] == '是',
-                "excel_index": index
-            }
-            questions.append(question_data)
+            for index, row in category_questions.iterrows():
+                question_data = {
+                    "category": row['類別'],
+                    "question": row['題目內容'],
+                    "options": [row['選項A'], row['選項B'], row['選項C']],
+                    "correct_answer": row['正確答案'],
+                    "appeared": row['出現過'] == '是',
+                    "excel_index": index
+                }
+                questions.append(question_data)
 
-        return questions
-    except Exception as e:
-        print(f"重新載入題目時發生錯誤: {e}")
-        return []
+            return questions
+        except Exception as e:
+            print(f"重新載入題目時發生錯誤: {e}")
+            return []
 
 @app.route('/')
 def index():
@@ -148,12 +166,72 @@ def punishment_videos():
 
 @app.route('/videos/<path:filename>')
 def serve_video(filename):
-    """提供影片和圖片檔案服務"""
+    """提供影片和圖片檔案服務（支援中文檔名，防止路徑遍歷攻擊）"""
     try:
+        # 防止路徑遍歷：移除危險字元但保留中文
+        # 禁止: ../ .\ 絕對路徑 等危險模式
+        if '..' in filename or '\\' in filename or filename.startswith('/'):
+            return jsonify({"error": "Invalid filename"}), 403
+
+        # 只允許檔名，不允許路徑分隔符
+        if os.path.sep in filename or (os.path.altsep and os.path.altsep in filename):
+            return jsonify({"error": "Invalid filename"}), 403
+
+        # 檢查副檔名白名單
+        file_ext = os.path.splitext(filename)[1].lower()
+        if file_ext not in ALLOWED_VIDEO_EXTENSIONS:
+            return jsonify({"error": "File type not allowed"}), 403
+
+        # 建構完整路徑並驗證
+        file_path = os.path.join(video_dir, filename)
+        file_path = os.path.abspath(file_path)
+
+        # 確保檔案在指定目錄內（防止路徑遍歷）
+        if not file_path.startswith(os.path.abspath(video_dir)):
+            return jsonify({"error": "Access denied"}), 403
+
+        # 檢查檔案是否存在
+        if not os.path.exists(file_path):
+            return jsonify({"error": "File not found"}), 404
+
         return send_from_directory(video_dir, filename)
     except Exception as e:
         print(f"Error serving video file: {e}")
-        return jsonify({"error": "File not found"}), 404
+        return jsonify({"error": "Internal server error"}), 500
+
+@app.route('/audio/<path:filename>')
+def serve_audio(filename):
+    """提供音效檔案服務（支援中文檔名，防止路徑遍歷攻擊）"""
+    try:
+        # 防止路徑遍歷
+        if '..' in filename or '\\' in filename or filename.startswith('/'):
+            return jsonify({"error": "Invalid filename"}), 403
+
+        # 只允許檔名，不允許路徑分隔符
+        if os.path.sep in filename or (os.path.altsep and os.path.altsep in filename):
+            return jsonify({"error": "Invalid filename"}), 403
+
+        # 檢查副檔名白名單
+        file_ext = os.path.splitext(filename)[1].lower()
+        if file_ext not in ALLOWED_AUDIO_EXTENSIONS:
+            return jsonify({"error": "File type not allowed"}), 403
+
+        # 建構完整路徑並驗證
+        file_path = os.path.join(audio_dir, filename)
+        file_path = os.path.abspath(file_path)
+
+        # 確保檔案在指定目錄內
+        if not file_path.startswith(os.path.abspath(audio_dir)):
+            return jsonify({"error": "Access denied"}), 403
+
+        # 檢查檔案是否存在
+        if not os.path.exists(file_path):
+            return jsonify({"error": "File not found"}), 404
+
+        return send_from_directory(audio_dir, filename)
+    except Exception as e:
+        print(f"Error serving audio file: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
 @app.route('/api/clear_session', methods=['POST'])
 def clear_session():
@@ -179,6 +257,11 @@ def get_categories():
 @app.route('/api/questions', methods=['GET'])
 def get_questions():
     category = request.args.get('category')
+
+    # 輸入驗證：類別名稱
+    if not category or not isinstance(category, str):
+        return jsonify({"error": "Invalid category parameter"}), 400
+
     if category not in all_categorized_questions:
         return jsonify({"error": "Category not found"}), 404
 
@@ -217,17 +300,39 @@ def get_questions():
 @app.route('/api/check_answer', methods=['POST'])
 def check_answer():
     data = request.get_json()
-    excel_index = data.get('question_index')  # 現在這是Excel的索引
+
+    # 輸入驗證
+    if not data:
+        return jsonify({"error": "No data provided"}), 400
+
+    excel_index = data.get('question_index')
     selected_option = data.get('selected_option')
     category = data.get('category')
 
+    # 必填欄位驗證
     if excel_index is None or selected_option is None or category is None:
-        return jsonify({"error": "Missing data"}), 400
+        return jsonify({"error": "Missing required fields"}), 400
+
+    # 資料型態驗證
+    if not isinstance(excel_index, int) or excel_index < 0:
+        return jsonify({"error": "Invalid question_index"}), 400
+
+    if not isinstance(selected_option, str) or not selected_option.strip():
+        return jsonify({"error": "Invalid selected_option"}), 400
+
+    if not isinstance(category, str) or category not in all_categorized_questions:
+        return jsonify({"error": "Invalid category"}), 400
 
     try:
-        # 直接從Excel獲取題目資料
-        df = pd.read_excel(excel_file_path)
-        question_row = df.iloc[excel_index]
+        # 直接從Excel獲取題目資料（使用檔案鎖定）
+        with excel_lock:
+            df = pd.read_excel(excel_file_path)
+
+            # 檢查索引範圍
+            if excel_index >= len(df):
+                return jsonify({"error": "Question index out of range"}), 400
+
+            question_row = df.iloc[excel_index]
 
         # 檢查題目是否屬於指定類別
         if question_row['類別'] != category:
@@ -300,9 +405,13 @@ if __name__ == '__main__':
     print("健康活動問答系統 - 控制台版本")
     print("="*60)
     print("正在啟動Flask服務器...")
+
+    # 從環境變數判斷是否為生產環境
+    is_production = os.environ.get('FLASK_ENV') == 'production'
+
     print("\\n服務器資訊:")
     print("   URL: http://127.0.0.1:5000")
-    print("   環境: 開發模式")
+    print(f"   環境: {'生產模式' if is_production else '開發模式'}")
     print("\\n使用說明:")
     print("   1. 服務器啟動後，在瀏覽器中訪問 http://127.0.0.1:5000")
     print("   2. 選擇問題類別開始答題")
@@ -310,9 +419,10 @@ if __name__ == '__main__':
     print("\\n" + "="*60)
     print("服務器正在啟動中...")
     print("="*60)
-    
+
     try:
-        app.run(host='127.0.0.1', port=5000, debug=True)
+        # 只在開發環境啟用 debug 模式
+        app.run(host='127.0.0.1', port=5000, debug=not is_production)
     except KeyboardInterrupt:
         print("\\n\\n服務器已停止")
         print("感謝使用健康活動問答系統！")

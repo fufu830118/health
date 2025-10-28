@@ -320,6 +320,11 @@
     </style>
 </head>
 <body>
+    <!-- 答對音效 -->
+    <audio id="correctSound" preload="auto">
+        <source src="/audio/答對.wav" type="audio/wav">
+    </audio>
+
     <div class="main-container">
         <div class="feedback-container">
             <div class="celebration-particles" id="particles"></div>
@@ -474,6 +479,11 @@
             if (customMessage) {
                 document.getElementById('feedback-message').textContent = decodeURIComponent(customMessage);
             }
+
+            // 播放答對音效
+            const correctSound = document.getElementById('correctSound');
+            correctSound.volume = 0.5; // 音量 50%
+            correctSound.play().catch(e => console.log('音效播放失敗:', e));
         });
     </script>
 </body>

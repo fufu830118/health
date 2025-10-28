@@ -103,6 +103,12 @@ nul
 start_backend.bat
 backend/
 
+# 臨時生成的題庫文件
+專業題庫_新增320題.xlsx
+問答題庫範本_含新增題.xlsx
+~$*.xlsx
+~$*.xls
+
 # 敏感資訊（如果有的話）
 config.py
 secrets.py

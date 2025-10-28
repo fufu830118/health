@@ -290,10 +290,15 @@
     </style>
 </head>
 <body>
+    <!-- 答錯音效 -->
+    <audio id="incorrectSound" preload="auto">
+        <source src="/audio/答錯.wav" type="audio/wav">
+    </audio>
+
     <div class="main-container">
         <div class="feedback-container">
             <i class="fas fa-times-circle error-icon"></i>
-            <div class="main-message">再試一次！</div>
+            <div class="main-message">繼續努力！</div>
             <div class="sub-message" id="feedback-message">
                 很遺憾答錯了！請回到上一個擲骰子的位置！
             </div>
@@ -396,13 +401,21 @@
             });
         });
 
-        // 頁面載入完成後執行
+        // 頁面載入完成後執行（已移除隨機訊息功能，固定顯示預設文字）
         document.addEventListener('DOMContentLoaded', function() {
             const urlParams = new URLSearchParams(window.location.search);
             const customMessage = urlParams.get('message');
+
+            // 如果有自訂訊息則顯示
             if (customMessage) {
                 document.getElementById('feedback-message').textContent = decodeURIComponent(customMessage);
             }
+            // 否則保持 HTML 預設文字：「很遺憾答錯了！請回到上一個擲骰子的位置！」
+
+            // 播放答錯音效
+            const incorrectSound = document.getElementById('incorrectSound');
+            incorrectSound.volume = 0.5; // 音量 50%
+            incorrectSound.play().catch(e => console.log('音效播放失敗:', e));
         });
     </script>
 </body>

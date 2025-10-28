@@ -374,7 +374,7 @@
             },
             { name: '弓箭步30秒', file: '弓箭步30秒.mp4', type: 'video', description: '下肢肌力訓練，強化腿部肌群' },
             { name: '彈力帶30下', file: '彈力帶30下.mp4', type: 'video', description: '阻力訓練，增強肌肉力量' },
-            { name: '拳擊有氧1分鐘', file: '拳擊有氧1分鐘.mp4', type: 'video', description: '高強度有氧，燃燒卡路里' },
+            { name: '拳擊有氧60秒', file: '拳擊有氧60秒.mp4', type: 'video', description: '高強度有氧運動，燃燒卡路里' },
             { name: '棒式20秒', file: '棒式20秒.mp4', type: 'video', description: '核心訓練，增強核心穩定性' },
             { name: '深蹲15下', file: '深蹲15下.mp4', type: 'video', description: '下肢訓練，強化臀腿肌群' },
             { name: '高抬腿30秒', file: '高抬腿30秒.mp4', type: 'video', description: '爆發力訓練，提升心肺耐力' },
@@ -402,7 +402,7 @@
 
                 // 根據媒體類型生成不同的縮圖內容
                 const thumbnailContent = media.type === 'video'
-                    ? `<video src="/videos/${media.file}" preload="metadata"></video>`  // 影片：preload="metadata" 載入第一幀作為縮圖
+                    ? `<video src="/videos/${media.file}#t=3" preload="metadata"></video>`  // 影片：#t=3 設定預覽第3秒位置，避免黑屏
                     : `<img src="/videos/${media.file}" alt="${media.name}">`;         // 圖片：直接顯示
 
                 // 設定卡片的 HTML 結構

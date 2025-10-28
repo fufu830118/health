@@ -314,7 +314,7 @@
 
             <!-- 懲罰運動展示入口 -->
             <div style="margin-top: 2rem; text-align: center;">
-                <a href="/punishment_videos" class="category-button" style="max-width: 400px; margin: 0 auto; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2)); border-color: rgba(239, 68, 68, 0.3);">
+                <a href="/punishment_videos" id="punishmentButton" class="category-button" style="max-width: 400px; margin: 0 auto; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2)); border-color: rgba(239, 68, 68, 0.3);">
                     <i class="fas fa-dumbbell button-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
                     <span class="button-text">運動懲罰示範</span>
                 </a>
@@ -322,7 +322,112 @@
         </div>
     </div>
 
+    <!-- 背景音樂 -->
+    <audio id="bgMusic" loop>
+        <source src="/audio/index.mp3" type="audio/mpeg">
+    </audio>
+
     <script>
+        // 背景音樂控制
+        const bgMusic = document.getElementById('bgMusic');
+        bgMusic.volume = 0.3; // 設定音量為 30%
+        bgMusic.loop = true;  // 確保單曲循環
+        let musicStarted = false;
+
+        // 從 localStorage 恢復播放狀態
+        function restoreMusicState() {
+            const savedTime = localStorage.getItem('bgMusicTime');
+            const wasPlaying = localStorage.getItem('bgMusicPlaying') === 'true';
+
+            if (savedTime) {
+                bgMusic.currentTime = parseFloat(savedTime);
+            }
+
+            return wasPlaying;
+        }
+
+        // 保存播放狀態到 localStorage
+        function saveMusicState() {
+            localStorage.setItem('bgMusicTime', bgMusic.currentTime);
+            localStorage.setItem('bgMusicPlaying', !bgMusic.paused);
+        }
+
+        // 嘗試播放背景音樂的函數
+        function startBackgroundMusic() {
+            if (musicStarted) return;
+
+            // 恢復之前的播放位置
+            const wasPlaying = restoreMusicState();
+
+            bgMusic.play()
+                .then(() => {
+                    musicStarted = true;
+                    console.log('背景音樂繼續播放，位置:', bgMusic.currentTime);
+                })
+                .catch(e => {
+                    console.log('背景音樂播放失敗（需要用戶互動）:', e);
+                });
+        }
+
+        // 當離開頁面時保存狀態
+        window.addEventListener('beforeunload', function() {
+            saveMusicState();
+        });
+
+        // 定期保存播放位置（每秒）
+        setInterval(saveMusicState, 1000);
+
+        // 持續嘗試播放（不使用 once，這樣每次點擊都會嘗試）
+        document.addEventListener('click', startBackgroundMusic);
+        document.addEventListener('touchstart', startBackgroundMusic);
+        document.addEventListener('keydown', startBackgroundMusic);
+
+        // 頁面載入完成後嘗試自動播放
+        window.addEventListener('load', startBackgroundMusic);
+
+        // 當頁面獲得焦點時也嘗試播放（從其他頁面返回時）
+        window.addEventListener('focus', startBackgroundMusic);
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                startBackgroundMusic();
+            }
+        });
+
+        // AI 語音系統
+        let speechSynthesis = window.speechSynthesis;
+        let currentUtterance = null;
+
+        // 語音朗讀函數
+        function speakCategory(categoryName) {
+            // 停止之前的語音
+            if (speechSynthesis.speaking) {
+                speechSynthesis.cancel();
+            }
+
+            // 創建語音對象
+            currentUtterance = new SpeechSynthesisUtterance(categoryName);
+
+            // 設定語音參數
+            currentUtterance.lang = 'zh-TW';
+            currentUtterance.rate = 0.9;
+            currentUtterance.pitch = 1.2;
+            currentUtterance.volume = 1.0;
+
+            // 選擇女聲
+            const voices = speechSynthesis.getVoices();
+            const femaleVoice = voices.find(voice =>
+                (voice.lang.includes('zh') || voice.lang.includes('TW')) &&
+                (voice.name.includes('Female') || voice.name.includes('女'))
+            ) || voices.find(voice => voice.lang.includes('zh'));
+
+            if (femaleVoice) {
+                currentUtterance.voice = femaleVoice;
+            }
+
+            // 開始朗讀
+            speechSynthesis.speak(currentUtterance);
+        }
+
         // 類別圖標映射（五個主題：環保、安全、衛生、健康、防災）
         const categoryIcons = {
             '環保題': 'fas fa-recycle',           // 環保：回收圖標
@@ -354,6 +459,18 @@
                         <span class="button-text">${category}</span>
                     `;
 
+                    // 添加 hover 語音朗讀
+                    button.addEventListener('mouseenter', function() {
+                        speakCategory(category);
+                    });
+
+                    // 離開時停止語音
+                    button.addEventListener('mouseleave', function() {
+                        if (speechSynthesis.speaking) {
+                            speechSynthesis.cancel();
+                        }
+                    });
+
                     container.appendChild(button);
                 });
             } catch (error) {
@@ -363,8 +480,29 @@
             }
         }
 
-        // 頁面載入完成後執行
-        document.addEventListener('DOMContentLoaded', loadCategories);
+        // 確保語音引擎已載入
+        if (speechSynthesis.getVoices().length === 0) {
+            speechSynthesis.addEventListener('voiceschanged', function() {
+                console.log('語音引擎已載入');
+            }, { once: true });
+        }
+
+        // 為懲罰按鈕添加語音
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCategories();
+
+            const punishmentButton = document.getElementById('punishmentButton');
+            if (punishmentButton) {
+                punishmentButton.addEventListener('mouseenter', function() {
+                    speakCategory('運動懲罰示範');
+                });
+                punishmentButton.addEventListener('mouseleave', function() {
+                    if (speechSynthesis.speaking) {
+                        speechSynthesis.cancel();
+                    }
+                });
+            }
+        });
     </script>
 </body>
 </html>
