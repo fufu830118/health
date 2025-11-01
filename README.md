@@ -1,199 +1,93 @@
-# 🏥 健康知識問答系統
+# 健康知識問答系統 - Supabase 版
 
-一個具有未來感設計的中文健康教育問答應用，採用 Flask 後端和先進的前端技術，包含玻璃擬物化效果、Web Audio API 音效系統和智能問題管理。
-
-## ✨ 主要功能
-
-### 🎨 現代化 UI 設計
-- **玻璃擬物化介面**：半透明容器配合背景模糊效果
-- **動態粒子背景**：純 CSS 動畫浮動粒子效果
-- **漸層文字特效**：彩色漸層標題配合發光動畫
-- **響應式網格佈局**：適配各種螢幕尺寸的流暢體驗
-
-### 🔊 先進音效系統
-- **Web Audio API**：純 JavaScript 即時生成音效，無需外部檔案
-- **情境音效**：懸停、點擊、倒數計時、警告、成功、錯誤等音效
-- **智能初始化**：用戶互動觸發音效系統，符合瀏覽器政策
-
-### 📊 智能問題管理
-- **Excel 即時整合**：直接讀寫 Excel 檔案進行問題追蹤
-- **使用狀態追蹤**：自動標記已出現問題，避免重複
-- **類別智能重置**：完成所有問題後自動重新開始
-
-### ⏰ 互動計時系統
-- **30 秒倒數計時器**：視覺化進度顯示
-- **階段性警告**：10 秒時黃色警告，5 秒時紅色警告
-- **音效提醒**：配合視覺警告的音效回饋
+純前端健康教育問答應用，使用 Supabase 雲端資料庫。
 
 ## 🚀 快速開始
 
-### 系統需求
-- Python 3.7+
-- 支援的瀏覽器（Chrome、Firefox、Safari、Edge）
+### 1. 設定 Supabase
 
-### 安裝與執行
+1. 登入 [Supabase](https://supabase.com/)
+2. 建立新專案
+3. 建立 `questions` 資料表：
+
+```sql
+CREATE TABLE questions (
+    id BIGSERIAL PRIMARY KEY,
+    category TEXT NOT NULL,
+    question TEXT NOT NULL,
+    option_a TEXT NOT NULL,
+    option_b TEXT NOT NULL,
+    option_c TEXT NOT NULL,
+    correct TEXT NOT NULL CHECK (correct IN ('A', 'B', 'C')),
+    explanation TEXT
+);
+
+-- 設定 RLS Policy
+ALTER TABLE questions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Allow public SELECT" ON questions FOR SELECT USING (true);
+```
+
+4. 新增題目資料
+5. 複製 Project URL 和 anon key
+
+### 2. 更新連線設定
+
+編輯 `supabase-client.js`:
+
+```javascript
+const SUPABASE_URL = "您的 Supabase URL";
+const SUPABASE_KEY = "您的 anon key";
+```
+
+### 3. 執行
+
+使用本機伺服器開啟：
 
 ```bash
-# 1. 創建並啟動虛擬環境
-python -m venv venv
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # macOS/Linux
-
-# 2. 安裝相依套件
-pip install -r requirements.txt
-
-# 3. 啟動應用程式
-python app.py
+python -m http.server 8000
+# 或
+npx http-server -p 8000
 ```
 
-### 快速啟動（Windows）
-```bash
-# 使用批次檔一鍵啟動
-start_health_quiz.bat
+瀏覽器開啟 `http://localhost:8000`
+
+## 📁 檔案結構
+
+- `index.html` - 主選單
+- `question_display.html` - 答題頁面
+- `feedback_correct.html` - 答對回饋
+- `feedback_incorrect.html` - 答錯回饋
+- `timeout_feedback.html` - 逾時回饋
+- `punishment_videos.html` - 運動懲罰影片展示
+- `supabase-client.js` - Supabase 連線層
+
+## ✨ 功能
+
+- ✅ 30 秒倒數計時
+- ✅ 答對/答錯即時回饋
+- ✅ 詳解顯示
+- ✅ 語音朗讀
+- ✅ 音效系統
+- ✅ 運動懲罰影片展示
+- ✅ 響應式設計
+
+## 🎵 音效檔案
+
+請將音效檔案放在 `音效/` 目錄：
+- `答題背景音樂.mp3`
+- `答對音效.mp3`
+- `答錯音效.mp3`
+- `逾時音效.mp3`
+
+## 📝 Supabase 資料表範例
+
+```sql
+INSERT INTO questions (category, question, option_a, option_b, option_c, correct, explanation)
+VALUES
+('健康題', '每天應該喝多少水？', '1公升', '2公升', '3公升', 'B', '成人每天建議攝取約 2 公升的水分'),
+('環保題', '哪種垃圾屬於可回收資源？', '廚餘', '寶特瓶', '衛生紙', 'B', '寶特瓶屬於可回收塑膠類');
 ```
-
-### 存取應用程式
-開啟瀏覽器並前往：http://127.0.0.1:5000
-
-## 📁 專案結構
-
-```
-health-quiz/
-├── app.py                      # Flask 主應用程式
-├── requirements.txt            # Python 相依套件
-├── 問答題庫範本.xlsx           # Excel 問題資料庫
-├── start_health_quiz.bat      # Windows 快速啟動腳本
-│
-├── index.html                  # 主選單（玻璃擬物化設計）
-├── question_display.html       # 問題顯示頁面（含音效系統）
-├── feedback_correct.html       # 正確答案回饋頁面
-├── feedback_incorrect.html     # 錯誤答案回饋頁面
-├── timeout_feedback.html       # 逾時回饋頁面
-├── no_more_questions.html      # 類別完成通知頁面
-│
-├── CLAUDE.md                   # Claude Code 開發指南
-└── README.md                   # 專案說明文件
-```
-
-## 🎵 音效系統特色
-
-### Web Audio API 整合
-- **即時音效生成**：使用振盪器即時產生音效
-- **多層次音效**：支援和弦與序列音效組合
-- **瀏覽器相容性**：自動適配不同瀏覽器的 Audio Context
-
-### 音效類型
-| 音效 | 頻率 | 用途 |
-|------|------|------|
-| click | 800Hz | 按鈕點擊 |
-| hover | 600Hz | 滑鼠懸停 |
-| tick | 1200Hz | 倒數計時 |
-| warning | 523Hz | 10秒警告 |
-| critical | 和弦 | 5秒緊急警告 |
-| timeout | 三音下降 | 時間到警報 |
-| success | 上升音階 | 答對音效 |
-| error | 下降音階 | 答錯音效 |
-
-## 📊 Excel 資料庫格式
-
-### 必要欄位
-- **類別**：問題分類（如：安全題、健康題、環境題）
-- **題目內容**：問題文字內容
-- **選項A/B/C**：三個選擇選項
-- **正確答案**：A、B 或 C
-- **出現過**：系統自動維護，標記已使用問題
-
-### 範例資料
-| 類別 | 題目內容 | 選項A | 選項B | 選項C | 正確答案 | 出現過 |
-|------|----------|-------|-------|-------|----------|--------|
-| 健康題 | 每天應該喝多少水？ | 1公升 | 2公升 | 3公升 | B | 是 |
-
-## 🎨 設計系統
-
-### 色彩配置
-- **主背景**：深藍漸層 (#0a0f1c → #0f1629)
-- **強調色**：青色 (#00d9ff)、紫色 (#7c3aed)、粉色 (#ec4899)
-- **文字色**：白色主文字、淺灰副文字
-- **玻璃效果**：半透明背景配合模糊濾鏡
-
-### 響應式斷點
-- **桌面**：> 768px，完整功能展示
-- **平板**：768px，適中尺寸佈局
-- **手機**：< 480px，緊湊垂直佈局
-
-## 🛠️ 技術架構
-
-### 後端技術
-- **Flask 2.3.2**：Web 框架
-- **pandas + openpyxl**：Excel 檔案處理
-- **threading**：多執行緒支援
-
-### 前端技術
-- **Tailwind CSS**：實用優先的 CSS 框架
-- **FontAwesome 6**：現代化圖示庫
-- **Web Audio API**：瀏覽器原生音效支援
-- **CSS Grid + Flexbox**：現代化佈局系統
-
-### 設計技術
-- **CSS 自定義屬性**：主題色彩系統
-- **Backdrop Filter**：玻璃擬物化效果
-- **CSS 動畫**：關鍵影格動畫系統
-- **漸層與陰影**：視覺層次效果
-
-## 🔧 開發與部署
-
-### 開發模式
-```bash
-# 開發環境啟動
-python app.py
-
-# 瀏覽器自動開啟 http://127.0.0.1:5000
-# 支援 Flask 開發模式熱重載
-```
-
-### 生產環境部署
-- **PyInstaller 支援**：可打包成獨立執行檔
-- **跨平台相容**：Windows、macOS、Linux
-- **CDN 資源**：所有外部資源均透過 CDN 載入
-
-### 自訂與擴充
-
-#### 新增問題類別
-1. 在 Excel 檔案新增類別名稱
-2. 可選：在 `index.html` 新增對應圖示
-3. 系統自動載入新類別
-
-#### 調整 UI 主題
-1. 修改 CSS `:root` 變數定義顏色
-2. 調整 Tailwind 類別
-3. 修改玻璃擬物化透明度
-
-#### 擴充音效系統
-1. 編輯 `question_display.html` 中的 `SoundManager`
-2. 新增音效類型與頻率設定
-3. 綁定新的互動事件
-
-## 📱 使用體驗
-
-### 使用流程
-1. **啟動應用**：執行程式後自動開啟瀏覽器
-2. **選擇類別**：點選感興趣的問題類別
-3. **答題互動**：30 秒內選擇答案並提交
-4. **即時回饋**：立即查看答題結果和解釋
-5. **繼續挑戰**：返回選單挑戰其他類別
-
-### 特色互動
-- **音效回饋**：每個操作都有對應音效
-- **視覺回饋**：懸停、點擊、選擇的視覺變化
-- **進度追蹤**：已答題目自動標記，避免重複
-- **智能提示**：時間警告與視覺提示系統
-
-## 📄 授權資訊
-
-MIT License - 歡迎自由使用與修改
 
 ---
 
-🎉 **開始您的健康知識挑戰之旅！**
-
-*具有未來感的學習體驗，讓健康教育更加有趣互動*
+**注意**: 此為純前端版本，題目資料從 Supabase 讀取，無需 Flask 伺服器。

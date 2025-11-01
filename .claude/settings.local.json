@@ -55,7 +55,8 @@
       "Bash(gh repo create:*)",
       "mcp__filesystem__edit_file",
       "mcp__filesystem__write_file",
-      "Bash(timeout:*)"
+      "Bash(timeout:*)",
+      "Bash(nul)"
     ],
     "deny": []
   }
