@@ -1,4 +1,4 @@
-# 健康知識問答系統 🏥
+# 🎲 安全健康知識大富翁活動
 
 現代化的中文健康教育問答應用，採用 **Supabase 雲端資料庫 + 純前端 SPA 架構**。
 
@@ -8,13 +8,23 @@
 
 ## ✨ 功能特色
 
+### 核心功能
 - ✅ **315 題專業題庫** - 涵蓋健康、環保、安全、衛生、防災五大類別
-- ✅ **30 秒倒數計時** - 視覺化警告（10秒黃色、5秒紅色）
-- ✅ **詳細解答系統** - 答錯時顯示專業詳解
-- ✅ **Web Audio API 音效** - 即時音調生成，無需外部檔案
-- ✅ **運動懲罰影片** - 8 個運動示範影片展示
+- ✅ **單頁應用架構** - 流暢頁面切換，無需重新載入
+- ✅ **30 秒倒數計時** - 視覺化警告（10秒黃色、5秒紅色）+ 暫停功能
+- ✅ **智慧回饋系統** - 顯示使用者選擇與正確答案對比
+- ✅ **詳細解答** - 答錯時顯示專業詳解
+
+### 互動功能
+- ✅ **鍵盤快捷鍵** - 數字鍵選題、空白鍵控制
+- ✅ **散場音樂** - 點擊標題切換音樂
+- ✅ **運動懲罰影片** - 8 個運動示範，支援計時器與背景音樂
+- ✅ **音效系統** - 背景音樂、答題音效、倒數音樂
+
+### UI/UX
 - ✅ **玻璃擬物化 UI** - 未來感設計配合動態粒子背景
 - ✅ **響應式設計** - 完美支援手機、平板、桌面
+- ✅ **100% 縮放優化** - 字體放大，無滾動條設計
 
 ## 🚀 快速開始
 
@@ -96,20 +106,29 @@ npx http-server -p 8000
 
 ```
 health-quiz/
-├── index.html                  # 主選單頁面
-├── question_display.html       # 答題頁面
-├── feedback_correct.html       # 答對回饋頁面
-├── feedback_incorrect.html     # 答錯回饋頁面（含詳解）
-├── timeout_feedback.html       # 逾時回饋頁面
-├── punishment_videos.html      # 運動懲罰影片展示
+├── index.html                  # 單頁應用主檔案（包含所有頁面）
+│   ├── page-menu              # 主選單
+│   ├── page-question          # 答題頁面
+│   ├── page-correct           # 答對回饋
+│   ├── page-incorrect         # 答錯回饋（含正確答案對比）
+│   ├── page-timeout           # 超時回饋
+│   └── page-videos            # 運動影片展示
 ├── supabase-client.js         # Supabase 連線層
 ├── supabase_questions.csv     # 題庫 CSV (315題)
 ├── supabase_questions.xlsx    # 題庫 Excel 備份
 ├── 影片/                       # 運動影片資料夾
 │   ├── 全組開合跳30秒.mp4
 │   ├── 全組深蹲30秒.mp4
+│   ├── 深蹲15下.mp4
+│   ├── 弓箭步30秒.mp4
 │   └── ...（共8個檔案）
-└── 音效/                       # 音效資料夾（選用）
+└── 音效/                       # 音效資料夾
+    ├── 背景音樂.mp3           # 主選單音樂
+    ├── 答題音樂.mp3           # 答題音樂
+    ├── 散場音樂.mp3           # 結束音樂
+    ├── 倒數背景音樂.m4a       # 運動計時器音樂
+    ├── 答對.wav
+    └── 答錯.wav
 ```
 
 ## 🎯 題庫類別
@@ -165,13 +184,14 @@ const categoryIcons = {
 ```
 
 ### 更新運動影片
-編輯 `punishment_videos.html` 中的 `mediaFiles` 陣列：
+編輯 `index.html` 中的 `mediaFiles` 陣列（page-videos 區域）：
 
 ```javascript
 const mediaFiles = [
-    { name: '全組開合跳30秒', file: '全組開合跳30秒.mp4', type: 'video' },
-    { name: '全組深蹲30秒', file: '全組深蹲30秒.mp4', type: 'video' },
+    { name: '全組開合跳30秒', file: '全組開合跳30秒.mp4', type: 'video', duration: 30 },
+    { name: '全組深蹲30秒', file: '全組深蹲30秒.mp4', type: 'video', duration: 30 },
     // ... 新增更多影片
+    // duration: 計時器秒數（0 表示無計時器）
 ];
 ```
 

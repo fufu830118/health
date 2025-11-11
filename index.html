@@ -99,8 +99,8 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 2rem;
-            max-width: 1200px;
+            padding: 1rem;
+            max-width: 100%;
             margin: 0 auto;
         }
 
@@ -117,8 +117,8 @@
             position: relative;
             overflow: hidden;
             animation: glowPulse 4s ease-in-out infinite alternate;
-            width: 100%;
-            max-width: 1000px;
+            width: calc(100% - 2rem);
+            max-width: 1800px;
         }
 
         @keyframes glowPulse {
@@ -149,6 +149,8 @@
             text-shadow: 0 0 50px rgba(0, 217, 255, 0.3);
             animation: titleGlow 3s ease-in-out infinite alternate;
             position: relative;
+            cursor: pointer;
+            user-select: none;
         }
 
         @keyframes titleGlow {
@@ -167,10 +169,10 @@
         /* =========== 按鈕容器 =========== */
         .button-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2rem;
             width: 100%;
-            max-width: 900px;
+            max-width: 100%;
             margin-top: 2rem;
             animation: fadeInUp 1s ease-out 0.3s both;
         }
@@ -189,9 +191,9 @@
         /* =========== 科技風格按鈕 =========== */
         .category-button {
             position: relative;
-            padding: 2rem 1.5rem;
+            padding: 3rem 2rem;
             border: none;
-            border-radius: 16px;
+            border-radius: 20px;
             cursor: pointer;
             text-decoration: none;
             display: flex;
@@ -200,13 +202,13 @@
             justify-content: center;
             color: var(--text-primary);
             font-weight: 600;
-            font-size: clamp(1.2rem, 2.5vw, 1.4rem);
+            font-size: clamp(1.6rem, 2.5vw, 2rem);
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
-            min-height: 140px;
+            min-height: 200px;
         }
 
         .category-button::before {
@@ -263,8 +265,8 @@
         }
 
         .button-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.8rem;
+            font-size: 4rem;
+            margin-bottom: 1.2rem;
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
             background-clip: text;
             -webkit-background-clip: text;
@@ -286,6 +288,12 @@
             position: relative;
             z-index: 1;
             text-align: center;
+            white-space: nowrap;
+        }
+
+        /* 快捷鍵提示框 - 已隱藏 */
+        .shortcuts-hint {
+            display: none;
         }
 
         /* =========== 問題顯示頁面樣式 =========== */
@@ -297,42 +305,43 @@
             box-shadow:
                 0 8px 32px rgba(0, 0, 0, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            padding: 3rem 2rem;
+            padding: 2.5rem 3rem 2rem 3rem;
             position: relative;
             overflow: hidden;
             animation: glowPulse 4s ease-in-out infinite alternate;
-            width: 100%;
+            width: calc(100% - 2rem);
+            max-width: 1800px;
             text-align: center;
         }
 
         .question-text {
-            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            font-size: clamp(2.5rem, 6vw, 4rem);
             font-weight: 600;
             background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 50%, var(--accent-pink) 100%);
             background-clip: text;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 2rem;
-            line-height: 1.4;
+            line-height: 1.3;
             animation: titleGlow 3s ease-in-out infinite alternate;
         }
 
         .options-container {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
         }
 
         .option-btn {
             position: relative;
-            padding: 1.5rem;
+            padding: 2.2rem 2rem;
             border: none;
-            border-radius: 16px;
+            border-radius: 20px;
             cursor: pointer;
             color: var(--text-primary);
             font-weight: 500;
-            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            font-size: clamp(1.8rem, 3.5vw, 2.3rem);
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -341,6 +350,7 @@
             text-align: left;
             display: flex;
             align-items: center;
+            line-height: 1.4;
         }
 
         .option-btn::before {
@@ -420,12 +430,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
 
         .countdown-icon {
-            font-size: 2rem;
+            font-size: 3.5rem;
             background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
             background-clip: text;
             -webkit-background-clip: text;
@@ -434,10 +444,10 @@
         }
 
         .countdown-text {
-            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-size: clamp(3rem, 6vw, 4rem);
             font-weight: 600;
             color: var(--text-primary);
-            min-width: 3rem;
+            min-width: 5rem;
             text-align: center;
         }
 
@@ -471,13 +481,15 @@
             50% { transform: scale(1.2); }
         }
 
+        /* 快捷鍵提示（問答頁面） - 已隱藏 */
+
         /* 提交答案按鈕樣式 */
         .submit-button {
-            margin-top: 2rem;
-            padding: 1rem 2rem;
+            margin-top: 1.5rem;
+            padding: 1.5rem 3rem;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 1.6rem;
             font-weight: 500;
             cursor: not-allowed;
             background: linear-gradient(135deg, #cbd5e1, #94a3b8);
@@ -510,10 +522,10 @@
 
         /* 暫停按鈕樣式 */
         .pause-button {
-            padding: 0.8rem 1.5rem;
+            padding: 1.2rem 2.5rem;
             border: none;
-            border-radius: 8px;
-            font-size: 0.95rem;
+            border-radius: 12px;
+            font-size: 1.5rem;
             font-weight: 500;
             cursor: pointer;
             background: linear-gradient(135deg, #f59e0b, #d97706);
@@ -550,13 +562,13 @@
             background: var(--glass-bg);
             backdrop-filter: blur(20px);
             border-radius: 24px;
-            padding: 3rem 2rem;
+            padding: 2rem 2.5rem;
             text-align: center;
             position: relative;
             overflow: hidden;
             animation: fadeInUp 1s ease-out;
-            width: 100%;
-            max-width: 800px;
+            width: calc(100% - 2rem);
+            max-width: 1600px;
         }
 
         .feedback-container.success {
@@ -632,9 +644,9 @@
         }
 
         .success-icon {
-            font-size: clamp(4rem, 10vw, 6rem);
+            font-size: clamp(4.5rem, 9vw, 7rem);
             color: var(--success-color);
-            margin-bottom: 1.5rem;
+            margin-bottom: 0;
             animation: iconCelebrate 2s ease-in-out infinite alternate;
             text-shadow: 0 0 30px var(--success-glow);
         }
@@ -651,9 +663,9 @@
         }
 
         .error-icon {
-            font-size: clamp(4rem, 10vw, 6rem);
+            font-size: clamp(4.5rem, 9vw, 7rem);
             color: var(--error-color);
-            margin-bottom: 1.5rem;
+            margin-bottom: 0;
             animation: iconShake 2s ease-in-out infinite;
             text-shadow: 0 0 30px var(--error-glow);
         }
@@ -671,9 +683,9 @@
         }
 
         .timeout-icon {
-            font-size: clamp(4rem, 10vw, 6rem);
+            font-size: clamp(4.5rem, 9vw, 7rem);
             color: var(--warning-color);
-            margin-bottom: 1.5rem;
+            margin-bottom: 0;
             animation: iconTick 2s ease-in-out infinite;
             text-shadow: 0 0 30px var(--warning-glow);
         }
@@ -691,9 +703,9 @@
         }
 
         .main-message {
-            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
             font-weight: 800;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0;
             animation: titleGlow 3s ease-in-out infinite alternate;
         }
 
@@ -719,22 +731,22 @@
         }
 
         .sub-message {
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            font-size: clamp(1.4rem, 3vw, 2rem);
             color: var(--text-secondary);
-            margin-bottom: 2.5rem;
-            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
             opacity: 0.9;
         }
 
         .action-button {
             position: relative;
-            padding: 1.2rem 2rem;
+            padding: 1.8rem 3rem;
             border: none;
-            border-radius: 16px;
+            border-radius: 20px;
             cursor: pointer;
             color: var(--text-primary);
             font-weight: 600;
-            font-size: clamp(1.1rem, 2.5vw, 1.3rem);
+            font-size: clamp(1.6rem, 3vw, 2rem);
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -744,7 +756,7 @@
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.8rem;
         }
 
         .action-button::before {
@@ -985,10 +997,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(0, 0, 0, 0.95);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            padding: 2rem;
         }
 
         .modal.active {
@@ -997,29 +1010,34 @@
 
         .modal-content {
             position: relative;
-            max-width: 90%;
-            max-height: 90%;
+            width: 100%;
+            max-width: 1600px;
             display: flex;
             gap: 2rem;
-            background: var(--secondary-bg);
-            border-radius: 16px;
-            padding: 2rem;
+            align-items: center;
+            justify-content: center;
         }
 
         .media-container {
             flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 100%;
         }
 
         .timer-panel {
-            width: 300px;
-            background: rgba(30, 41, 59, 0.6);
+            width: 350px;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(20px);
             border-radius: 16px;
             padding: 2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            flex-shrink: 0;
         }
 
         .timer-display {
@@ -1088,33 +1106,44 @@
 
         .modal-video {
             width: 100%;
-            max-width: 1000px;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            max-width: 100%;
+            max-height: calc(100vh - 4rem);
             border-radius: 12px;
+            object-fit: contain;
         }
 
         .modal-image {
             width: 100%;
-            max-width: 800px;
+            height: auto;
+            aspect-ratio: 16 / 9;
+            max-width: 100%;
+            max-height: calc(100vh - 4rem);
             border-radius: 12px;
+            object-fit: contain;
         }
 
         .close-modal {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            width: 40px;
-            height: 40px;
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
             background: var(--accent-red);
             border: none;
             border-radius: 50%;
             color: white;
-            font-size: 20px;
+            font-size: 24px;
             cursor: pointer;
             transition: all 0.3s ease;
+            z-index: 1001;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.5);
         }
 
         .close-modal:hover {
-            transform: rotate(90deg);
+            transform: rotate(90deg) scale(1.1);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.7);
         }
 
         /* =========== 響應式設計 =========== */
@@ -1134,18 +1163,43 @@
                 font-size: 2rem;
             }
 
+            .shortcuts-hint {
+                padding: 1rem;
+            }
+
+            .shortcuts-hint h4 {
+                font-size: 1rem;
+            }
+
+            .shortcuts-hint p {
+                font-size: 0.9rem;
+            }
+
             .video-grid {
                 grid-template-columns: 1fr;
                 gap: 1.5rem;
             }
 
-            .modal-content {
+            .modal {
                 padding: 1rem;
+            }
+
+            .modal-content {
                 flex-direction: column;
+                gap: 1rem;
             }
 
             .timer-panel {
                 width: 100%;
+                max-width: 400px;
+            }
+
+            .close-modal {
+                top: 1rem;
+                right: 1rem;
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
             }
 
             .main-container {
@@ -1179,6 +1233,23 @@
             .button-icon {
                 font-size: 1.8rem;
                 margin-bottom: 0.5rem;
+            }
+
+            .shortcuts-hint {
+                padding: 0.8rem;
+            }
+
+            .shortcuts-hint h4 {
+                font-size: 0.95rem;
+            }
+
+            .shortcuts-hint p {
+                font-size: 0.85rem;
+            }
+
+            .key-badge {
+                padding: 0.15rem 0.4rem;
+                font-size: 0.9rem;
             }
 
             .question-container {
@@ -1221,11 +1292,21 @@
         <source src="音效/答錯.wav" type="audio/wav">
     </audio>
 
+    <!-- 散場音樂 -->
+    <audio id="endingAudio" preload="auto">
+        <source src="音效/散場音樂.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 倒數背景音樂 -->
+    <audio id="countdownMusic" preload="auto" loop>
+        <source src="音效/倒數背景音樂.m4a" type="audio/mp4">
+    </audio>
+
     <!-- ========== 主選單頁面 (page-menu) ========== -->
     <div id="page-menu" class="page active">
         <div class="main-container">
             <div class="glass-container">
-                <div class="main-title">健康知識問答</div>
+                <div class="main-title" id="mainTitle" onclick="playEndingMusic()">🎲安全健康知識大富翁活動</div>
                 <div class="subtitle">選擇您想挑戰的題目類別</div>
 
                 <div class="button-container" id="categoriesContainer">
@@ -1238,6 +1319,17 @@
                         <i class="fas fa-dumbbell button-icon" style="background: linear-gradient(135deg, #ef4444, #dc2626); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
                         <span class="button-text">運動懲罰示範</span>
                     </button>
+                </div>
+
+                <!-- 快捷鍵提示 -->
+                <div class="shortcuts-hint">
+                    <h4>
+                        <i class="fas fa-keyboard"></i>
+                        快捷鍵提示
+                    </h4>
+                    <p>
+                        按 <span class="key-badge">1</span> ~ <span class="key-badge">5</span> 選擇類別，連按兩次相同數字鍵進入
+                    </p>
                 </div>
             </div>
         </div>
@@ -1266,6 +1358,15 @@
                         <span>暫停</span>
                     </button>
                 </div>
+
+                <!-- 快捷鍵提示 -->
+                <div class="shortcuts-hint">
+                    <p>
+                        <i class="fas fa-keyboard"></i>
+                        按 <span class="key-badge">1</span> <span class="key-badge">2</span> <span class="key-badge">3</span> 選擇答案，連按兩次送出 ·
+                        <span class="key-badge">空白鍵</span> 暫停/繼續
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -1276,18 +1377,23 @@
             <div class="feedback-container success">
                 <div class="celebration-particles" id="particles"></div>
 
-                <i class="fas fa-check-circle success-icon"></i>
-                <div class="main-message success">答對了！</div>
-                <div class="sub-message">
-                    恭喜答對！你可以留在原地！
+                <!-- 圖示和標題同一行 -->
+                <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                    <i class="fas fa-check-circle success-icon" style="margin-bottom: 0;"></i>
+                    <div class="main-message success" style="margin-bottom: 0;">恭喜答對！你可以留在原地！</div>
+                </div>
+
+                <!-- 使用者選項 - 顯眼樣式 -->
+                <div id="user-selection-correct" class="sub-message" style="margin: 1.5rem 0; padding: 1.5rem; background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(0, 217, 255, 0.2)); border: 2px solid var(--success-color); border-radius: 16px; box-shadow: 0 4px 20px rgba(16, 185, 129, 0.3); font-weight: 600;">
+                    你選的選項是 (A) 選項內容
                 </div>
 
                 <!-- 詳解區域 -->
-                <div id="explanation-container-correct" style="display: none; margin: 2rem 0; padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border-left: 4px solid var(--success-color); border-radius: 12px; text-align: left;">
-                    <h3 style="color: var(--success-color); margin: 0 0 1rem 0; font-size: 1.3rem;">
+                <div id="explanation-container-correct" style="display: none; margin: 1.5rem 0; padding: 1.5rem; background: rgba(16, 185, 129, 0.1); border-left: 6px solid var(--success-color); border-radius: 16px; text-align: left;">
+                    <h3 style="color: var(--success-color); margin: 0 0 1rem 0; font-size: clamp(1.4rem, 3vw, 2rem);">
                         <i class="fas fa-lightbulb"></i> 詳細解說
                     </h3>
-                    <p id="explanation-text-correct" style="color: var(--text-primary); line-height: 1.8; margin: 0; font-size: 1.1rem;"></p>
+                    <p id="explanation-text-correct" style="color: var(--text-primary); line-height: 1.6; margin: 0; font-size: clamp(1.4rem, 3vw, 2rem);"></p>
                 </div>
 
                 <div class="button-container" style="display: flex; justify-content: center; flex-wrap: wrap;">
@@ -1304,18 +1410,28 @@
     <div id="page-incorrect" class="page">
         <div class="main-container">
             <div class="feedback-container error">
-                <i class="fas fa-times-circle error-icon"></i>
-                <div class="main-message error">繼續努力！</div>
-                <div class="sub-message">
-                    很遺憾答錯了！請回到上一個擲骰子的位置！
+                <!-- 圖示和標題同一行 -->
+                <div style="display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1rem;">
+                    <i class="fas fa-times-circle error-icon" style="margin-bottom: 0;"></i>
+                    <div class="main-message error" style="margin-bottom: 0;">很遺憾答錯了！請回到上一個擲骰子的位置！</div>
+                </div>
+
+                <!-- 使用者選項和正確答案 - 顯眼樣式 -->
+                <div style="margin: 1.5rem 0; padding: 1.5rem; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(236, 72, 153, 0.2)); border: 2px solid var(--error-color); border-radius: 16px; box-shadow: 0 4px 20px rgba(239, 68, 68, 0.3);">
+                    <div id="user-selection-incorrect" class="sub-message" style="margin-bottom: 0.8rem; font-weight: 600;">
+                        你選的選項是 (A) 選項內容
+                    </div>
+                    <div id="correct-answer-incorrect" class="sub-message" style="margin-bottom: 0; font-weight: 600; color: var(--success-color);">
+                        正確選項是 (C) 正確選項內容
+                    </div>
                 </div>
 
                 <!-- 詳解區域 -->
-                <div id="explanation-container-incorrect" style="display: none; margin: 2rem 0; padding: 1.5rem; background: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--error-color); border-radius: 12px; text-align: left;">
-                    <h3 style="color: var(--error-color); margin: 0 0 1rem 0; font-size: 1.3rem;">
+                <div id="explanation-container-incorrect" style="display: none; margin: 1.5rem 0; padding: 1.5rem; background: rgba(239, 68, 68, 0.1); border-left: 6px solid var(--error-color); border-radius: 16px; text-align: left;">
+                    <h3 style="color: var(--error-color); margin: 0 0 1rem 0; font-size: clamp(1.4rem, 3vw, 2rem);">
                         <i class="fas fa-lightbulb"></i> 詳細解說
                     </h3>
-                    <p id="explanation-text-incorrect" style="color: var(--text-primary); line-height: 1.8; margin: 0; font-size: 1.1rem;"></p>
+                    <p id="explanation-text-incorrect" style="color: var(--text-primary); line-height: 1.6; margin: 0; font-size: clamp(1.4rem, 3vw, 2rem);"></p>
                 </div>
 
                 <div class="button-container" style="display: flex; justify-content: center; flex-wrap: wrap;">
@@ -1424,6 +1540,16 @@
 
             // 顯示指定頁面
             document.getElementById(pageName).classList.add('active');
+
+            // 重置暫停狀態（離開答題頁面時）
+            if (pageName !== 'page-question' && isPaused) {
+                isPaused = false;
+                const pauseButton = document.getElementById('pauseButton');
+                if (pauseButton) {
+                    pauseButton.innerHTML = '<i class="fas fa-pause"></i><span>暫停</span>';
+                    pauseButton.classList.remove('paused');
+                }
+            }
 
             // 音樂控制
             if (pageName === 'page-menu') {
@@ -1659,12 +1785,70 @@
             }
         }
 
+        // =========== 主選單快捷鍵功能 ===========
+        let keyPressCount = 0;
+        let selectedCategory = null;
+        const categoryButtons = [];
+
+        function setupMenuKeyboardShortcuts() {
+            // 監聽鍵盤事件
+            document.addEventListener('keydown', function(event) {
+                // 只在主選單頁面啟用
+                if (!document.getElementById('page-menu').classList.contains('active')) {
+                    return;
+                }
+
+                const key = event.key;
+
+                // 數字鍵 1-5
+                if (key >= '1' && key <= '5') {
+                    const index = parseInt(key) - 1;
+                    const buttons = document.querySelectorAll('#categoriesContainer .category-button');
+
+                    if (index < buttons.length) {
+                        if (keyPressCount === 0) {
+                            // 第一次按數字鍵：選擇類別
+                            selectedCategory = buttons[index];
+
+                            // 高亮顯示選中的類別
+                            buttons.forEach(btn => btn.style.outline = 'none');
+                            selectedCategory.style.outline = '3px solid var(--accent-cyan)';
+                            selectedCategory.style.outlineOffset = '4px';
+
+                            keyPressCount = 1;
+
+                            // 語音提示
+                            const categoryText = selectedCategory.querySelector('.button-text').textContent;
+                            speakText(`已選擇 ${categoryText}，再按一次進入`);
+                        } else if (keyPressCount === 1 && selectedCategory === buttons[index]) {
+                            // 第二次按相同數字鍵：進入該類別
+                            selectedCategory.click();
+                            keyPressCount = 0;
+                        } else {
+                            // 按了不同數字鍵：重新選擇
+                            keyPressCount = 0;
+                            // 觸發同樣的邏輯
+                            document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+                        }
+                    }
+                }
+            });
+        }
+
         // =========== 題目頁面功能 ===========
         let countdownInterval;
         let isPaused = false;
         let currentTimer = 30;
 
         async function loadQuestion() {
+            // 重置暫停狀態
+            isPaused = false;
+            const pauseButton = document.getElementById('pauseButton');
+            if (pauseButton) {
+                pauseButton.innerHTML = '<i class="fas fa-pause"></i><span>暫停</span>';
+                pauseButton.classList.remove('paused');
+            }
+
             // 立即清空並顯示載入狀態
             document.getElementById('question-text').innerText = '載入題目中...';
             document.getElementById('options-container').innerHTML = '';
@@ -1854,7 +2038,10 @@
             questionMusic.pause();
             stopSpeaking();
 
+            // 儲存使用者選擇的選項資訊
             window.answerResult = result;
+            window.answerResult.userAnswer = userAnswer;
+            window.answerResult.userAnswerText = selectedOption.value;
 
             const redirect_page = result.isCorrect ? 'page-correct' : 'page-incorrect';
             showPage(redirect_page);
@@ -1864,6 +2051,88 @@
 
         // 暫停按鈕
         document.getElementById('pauseButton').addEventListener('click', togglePause);
+
+        // =========== 問答頁面快捷鍵功能 ===========
+        let optionKeyPressCount = 0;
+        let selectedOptionIndex = null;
+
+        function setupQuestionKeyboardShortcuts() {
+            document.addEventListener('keydown', function(event) {
+                const key = event.key;
+
+                // 只在問答頁面啟用
+                if (document.getElementById('page-question').classList.contains('active')) {
+                    // 空白鍵：暫停/繼續
+                    if (key === ' ' || key === 'Spacebar') {
+                        event.preventDefault(); // 防止頁面滾動
+                        togglePause();
+                        return;
+                    }
+
+                    // 數字鍵 1-3：選擇答案
+                    if (key >= '1' && key <= '3') {
+                        const index = parseInt(key) - 1;
+                        const currentOptions = document.querySelectorAll('.option-btn');
+
+                        if (index < currentOptions.length) {
+                            if (optionKeyPressCount === 0) {
+                                // 第一次按數字鍵：選擇答案
+                                selectedOptionIndex = index;
+
+                                // 移除所有選中狀態
+                                currentOptions.forEach(opt => opt.classList.remove('selected'));
+
+                                // 選中當前選項
+                                currentOptions[index].classList.add('selected');
+
+                                // 選中對應的 radio button
+                                const radioInput = document.getElementById(`option${index}`);
+                                if (radioInput) {
+                                    radioInput.checked = true;
+                                }
+
+                                // 啟用提交按鈕
+                                const submitButton = document.getElementById('submit-button');
+                                if (submitButton) {
+                                    submitButton.disabled = false;
+                                    submitButton.classList.add('enabled');
+                                }
+
+                                optionKeyPressCount = 1;
+
+                                // 播放選擇音效
+                                soundManager.play('select');
+
+                                // 語音提示
+                                const optionText = currentOptions[index].textContent.trim();
+                                speakText(`已選擇 ${optionText}，再按一次送出答案`);
+                            } else if (optionKeyPressCount === 1 && selectedOptionIndex === index) {
+                                // 第二次按相同數字鍵：送出答案
+                                submitAnswer();
+                                optionKeyPressCount = 0;
+                            } else {
+                                // 按了不同數字鍵：重新選擇
+                                optionKeyPressCount = 0;
+                                // 觸發同樣的邏輯
+                                document.dispatchEvent(new KeyboardEvent('keydown', { key: key }));
+                            }
+                        }
+                    }
+                }
+
+                // 回饋頁面和懲罰影片頁面：空白鍵返回主選單
+                if (document.getElementById('page-correct').classList.contains('active') ||
+                    document.getElementById('page-incorrect').classList.contains('active') ||
+                    document.getElementById('page-timeout').classList.contains('active') ||
+                    document.getElementById('page-videos').classList.contains('active')) {
+                    if (key === ' ' || key === 'Spacebar') {
+                        event.preventDefault();
+                        showPage('page-menu');
+                        return;
+                    }
+                }
+            });
+        }
 
         // =========== 回饋頁面功能 ===========
         function createCelebrationParticles() {
@@ -1890,6 +2159,14 @@
         function showCorrectFeedback() {
             setTimeout(createCelebrationParticles, 300);
 
+            // 顯示使用者選擇的選項
+            const userAnswer = window.answerResult?.userAnswer;
+            const userAnswerText = window.answerResult?.userAnswerText;
+            if (userAnswer && userAnswerText) {
+                const userSelectionElement = document.getElementById('user-selection-correct');
+                userSelectionElement.textContent = `你選的選項是 (${userAnswer}) ${userAnswerText}`;
+            }
+
             const explanation = window.answerResult?.explanation;
 
             if (explanation) {
@@ -1903,6 +2180,29 @@
         }
 
         function showIncorrectFeedback() {
+            // 顯示使用者選擇的選項
+            const userAnswer = window.answerResult?.userAnswer;
+            const userAnswerText = window.answerResult?.userAnswerText;
+            if (userAnswer && userAnswerText) {
+                const userSelectionElement = document.getElementById('user-selection-incorrect');
+                userSelectionElement.textContent = `你選的選項是 (${userAnswer}) ${userAnswerText}`;
+            }
+
+            // 顯示正確答案
+            const correctAnswer = window.answerResult?.correctAnswer;
+            if (correctAnswer && window.currentQuestion) {
+                const correctIndex = correctAnswer.charCodeAt(0) - 65; // A=0, B=1, C=2
+                const options = [
+                    window.currentQuestion.option_a,
+                    window.currentQuestion.option_b,
+                    window.currentQuestion.option_c
+                ];
+                const correctAnswerText = options[correctIndex];
+
+                const correctAnswerElement = document.getElementById('correct-answer-incorrect');
+                correctAnswerElement.textContent = `正確選項是 (${correctAnswer}) ${correctAnswerText}`;
+            }
+
             const explanation = window.answerResult?.explanation;
 
             if (explanation) {
@@ -1975,7 +2275,7 @@
 
             if (media.type === 'video') {
                 container.innerHTML = `
-                    <video class="modal-video" controls autoplay>
+                    <video class="modal-video" id="modalVideo" controls autoplay loop>
                         <source src="影片/${media.file}" type="video/mp4">
                         您的瀏覽器不支援影片播放。
                     </video>
@@ -2004,6 +2304,19 @@
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
+            }
+
+            // 停止倒數背景音樂
+            const countdownMusic = document.getElementById('countdownMusic');
+            if (countdownMusic) {
+                countdownMusic.pause();
+                countdownMusic.currentTime = 0;
+            }
+
+            // 恢復影片聲音（下次開啟時有聲音）
+            const modalVideo = document.getElementById('modalVideo');
+            if (modalVideo) {
+                modalVideo.muted = false;
             }
 
             modal.classList.remove('active');
@@ -2057,11 +2370,11 @@
             if (currentTime === 0) {
                 display.classList.add('warning');
                 info.textContent = '時間到！';
-                speakNumber('時間到');
+                // AI語音已停用
             } else {
                 display.classList.remove('warning');
                 info.textContent = `剩餘 ${currentTime} 秒`;
-                speakNumber(currentTime);
+                // AI語音已停用
             }
         }
 
@@ -2076,8 +2389,24 @@
             startBtn.disabled = true;
             startBtn.style.opacity = '0.5';
 
-            // 開始計時時播報初始時間
-            speakNumber(currentTime);
+            // 播放倒數背景音樂
+            const countdownMusic = document.getElementById('countdownMusic');
+            if (countdownMusic) {
+                countdownMusic.currentTime = 0;
+                countdownMusic.volume = 0.5;
+                countdownMusic.play().catch(error => {
+                    console.log('倒數音樂播放失敗:', error);
+                });
+            }
+
+            // 將影片靜音
+            const modalVideo = document.getElementById('modalVideo');
+            if (modalVideo) {
+                modalVideo.muted = true;
+                console.log('影片已靜音');
+            }
+
+            // AI語音已停用
 
             timerInterval = setInterval(() => {
                 if (currentTime > 0) {
@@ -2086,6 +2415,12 @@
 
                     if (currentTime === 0) {
                         playBeep();
+
+                        // 停止倒數背景音樂
+                        if (countdownMusic) {
+                            countdownMusic.pause();
+                        }
+
                         setTimeout(() => {
                             startBtn.disabled = false;
                             startBtn.style.opacity = '1';
@@ -2100,6 +2435,20 @@
             if (timerInterval) {
                 clearInterval(timerInterval);
                 timerInterval = null;
+            }
+
+            // 停止倒數背景音樂
+            const countdownMusic = document.getElementById('countdownMusic');
+            if (countdownMusic) {
+                countdownMusic.pause();
+                countdownMusic.currentTime = 0;
+            }
+
+            // 恢復影片聲音
+            const modalVideo = document.getElementById('modalVideo');
+            if (modalVideo) {
+                modalVideo.muted = false;
+                console.log('影片聲音已恢復');
             }
 
             const startBtn = document.getElementById('startBtn');
@@ -2133,6 +2482,10 @@
             // 載入主選單類別
             loadCategories();
 
+            // 設置快捷鍵
+            setupMenuKeyboardShortcuts();
+            setupQuestionKeyboardShortcuts();
+
             // 確保語音引擎已載入
             if (speechSynthesis.getVoices().length === 0) {
                 speechSynthesis.addEventListener('voiceschanged', function() {
@@ -2143,7 +2496,64 @@
             // 嘗試自動播放背景音樂
             window.addEventListener('load', startBackgroundMusic);
             window.addEventListener('focus', startBackgroundMusic);
+
+            // 顯示快捷鍵提示
+            console.log('%c快捷鍵提示', 'color: #00d9ff; font-size: 16px; font-weight: bold;');
+            console.log('主選單 - 數字鍵 1-5: 選擇類別，連按兩次進入');
+            console.log('答題頁面 - 數字鍵 1-3: 選擇答案，連按兩次送出');
+            console.log('答題頁面 - 空白鍵: 暫停/繼續');
         });
+
+        // =========== 播放散場音樂函數 ===========
+        let isEndingMusicPlaying = false;
+
+        function playEndingMusic() {
+            const endingAudio = document.getElementById('endingAudio');
+            const bgMusic = document.getElementById('bgMusic');
+            const qMusic = document.getElementById('questionMusic');
+
+            if (!endingAudio) return;
+
+            // 如果散場音樂正在播放，切換回背景音樂
+            if (isEndingMusicPlaying || !endingAudio.paused) {
+                endingAudio.pause();
+                console.log('已暫停散場音樂');
+
+                // 恢復背景音樂
+                if (bgMusic) {
+                    bgMusic.currentTime = 0;
+                    bgMusic.play().then(function() {
+                        console.log('背景音樂開始播放');
+                    }).catch(function(error) {
+                        console.log('背景音樂播放失敗:', error);
+                    });
+                }
+
+                isEndingMusicPlaying = false;
+            } else {
+                // 播放散場音樂
+                // 停止其他音樂
+                if (bgMusic) {
+                    bgMusic.pause();
+                    console.log('已暫停背景音樂');
+                }
+                if (qMusic) {
+                    qMusic.pause();
+                    console.log('已暫停答題音樂');
+                }
+
+                // 播放散場音樂
+                endingAudio.currentTime = 0;
+                endingAudio.volume = 0.5; // 設定音量
+                endingAudio.play().then(function() {
+                    console.log('散場音樂開始播放');
+                    isEndingMusicPlaying = true;
+                }).catch(function(error) {
+                    console.log('散場音樂播放失敗:', error);
+                    isEndingMusicPlaying = false;
+                });
+            }
+        }
     </script>
 </body>
 </html>

@@ -56,7 +56,15 @@
       "mcp__filesystem__edit_file",
       "mcp__filesystem__write_file",
       "Bash(timeout:*)",
-      "Bash(nul)"
+      "Bash(nul)",
+      "Bash(gh:*)",
+      "Bash(attrib:*)",
+      "Bash(explorer .)",
+      "Bash(cat:*)",
+      "Bash(for file in question_display.html feedback_correct.html feedback_incorrect.html timeout_feedback.html punishment_videos.html)",
+      "Bash(do)",
+      "Bash(echo:*)",
+      "Bash(done)"
     ],
     "deny": []
   }
