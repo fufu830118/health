@@ -315,7 +315,7 @@
         }
 
         .question-text {
-            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-size: clamp(2rem, 4.5vw, 2.8rem);
             font-weight: 600;
             background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 50%, var(--accent-pink) 100%);
             background-clip: text;
@@ -1506,6 +1506,13 @@
                         <i class="fas fa-redo"></i>
                     </button>
                 </div>
+                <!-- 瑜珈提示卡片 -->
+                <div id="yogaWarning" style="display: none; margin-top: 1rem; padding: 1rem; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(236, 72, 153, 0.2)); border: 2px solid var(--accent-red); border-radius: 12px; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);">
+                    <p style="color: var(--text-primary); margin: 0; font-size: 1rem; font-weight: 600; text-align: center;">
+                        <i class="fas fa-exclamation-triangle" style="color: var(--accent-red); margin-right: 0.5rem;"></i>
+                        如果60秒沒做完請回去擲骰子位置
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -1956,15 +1963,23 @@
         }
 
         function startCountdown(duration) {
+            // 清除舊的計時器
+            if (countdownInterval) {
+                clearInterval(countdownInterval);
+            }
+
             currentTimer = duration;
             const countdownDisplay = document.getElementById('countdown-timer');
             const countdownIcon = document.getElementById('countdown-icon');
 
+            // 立即更新顯示為初始秒數
+            countdownDisplay.textContent = duration;
             countdownDisplay.classList.remove('warning', 'critical');
             countdownIcon.classList.remove('warning', 'critical');
 
             countdownInterval = setInterval(() => {
                 if (!isPaused) {
+                    currentTimer--;
                     countdownDisplay.textContent = currentTimer;
 
                     if (currentTimer === 10) {
@@ -1989,8 +2004,6 @@
                             showPage('page-timeout');
                         }, 500);
                     }
-
-                    currentTimer--;
                 }
             }, 1000);
         }
@@ -2177,6 +2190,12 @@
             }
 
             correctSound.play().catch(e => console.log('音效播放失敗:', e));
+
+            // 3 秒後播放主選單背景音樂
+            setTimeout(() => {
+                bgMusic.currentTime = 0;
+                bgMusic.play().catch(e => console.log('背景音樂播放失敗:', e));
+            }, 3000);
         }
 
         function showIncorrectFeedback() {
@@ -2213,6 +2232,12 @@
             }
 
             incorrectSound.play().catch(e => console.log('音效播放失敗:', e));
+
+            // 3 秒後播放主選單背景音樂
+            setTimeout(() => {
+                bgMusic.currentTime = 0;
+                bgMusic.play().catch(e => console.log('背景音樂播放失敗:', e));
+            }, 3000);
         }
 
         function showTimeoutFeedback() {
@@ -2224,16 +2249,17 @@
         let currentTime = 0;
         let totalTime = 0;
         let audioContext = null;
+        let currentMedia = null;  // 儲存當前影片設定
 
         const mediaFiles = [
             { name: '全組開合跳30秒', file: '全組開合跳30秒.mp4', type: 'video', duration: 30, description: '全身有氧運動，提升心肺功能' },
             { name: '弓箭步30秒', file: '弓箭步30秒.mp4', type: 'video', duration: 30, description: '下肢肌力訓練，強化腿部肌群' },
-            { name: '彈力帶30下', file: '彈力帶30下.mp4', type: 'video', duration: 0, description: '阻力訓練，增強肌肉力量' },
-            { name: '拳擊有氧60秒', file: '拳擊有氧60秒.mp4', type: 'video', duration: 60, description: '高強度有氧運動，燃燒卡路里' },
+            { name: '彈力帶30下', file: '彈力帶30下.mp4', type: 'video', duration: 60, description: '阻力訓練，增強肌肉力量' },
+            { name: '拳擊有氧60秒', file: '拳擊有氧60秒.mp4', type: 'video', duration: 60, description: '高強度有氧運動，燃燒卡路里', keepVideoSound: true },
             { name: '棒式20秒', file: '棒式20秒.mp4', type: 'video', duration: 20, description: '核心訓練，增強核心穩定性' },
-            { name: '深蹲15下', file: '深蹲15下.mp4', type: 'video', duration: 0, description: '下肢訓練，強化臀腿肌群' },
+            { name: '深蹲15下', file: '深蹲15下.mp4', type: 'video', duration: 60, description: '下肢訓練，強化臀腿肌群' },
             { name: '高抬腿30秒', file: '高抬腿30秒.mp4', type: 'video', duration: 30, description: '爆發力訓練，提升心肺耐力' },
-            { name: '瑜珈姿勢示範', file: '拍瑜珈型態照片1張.jpg', type: 'image', duration: 0, description: '正確瑜珈姿勢參考' }
+            { name: '瑜珈姿勢示範', file: '拍瑜珈型態照片1張.jpg', type: 'image', duration: 60, description: '如果60秒沒做完請回去擲骰子位置' }
         ];
 
         function generateVideoCards() {
@@ -2273,6 +2299,8 @@
             const container = document.getElementById('modalMediaContainer');
             const timerPanel = document.getElementById('timerPanel');
 
+            currentMedia = media;  // 儲存當前影片設定
+
             if (media.type === 'video') {
                 container.innerHTML = `
                     <video class="modal-video" id="modalVideo" controls autoplay loop>
@@ -2280,17 +2308,28 @@
                         您的瀏覽器不支援影片播放。
                     </video>
                 `;
-
-                if (media.duration > 0) {
-                    timerPanel.style.display = 'flex';
-                    totalTime = media.duration;
-                    resetTimer();
-                }
             } else {
                 container.innerHTML = `
                     <img class="modal-image" src="影片/${media.file}" alt="${media.name}">
                 `;
+            }
+
+            // 只要有 duration > 0 就顯示計時器（不論影片或圖片）
+            const yogaWarning = document.getElementById('yogaWarning');
+            if (media.duration > 0) {
+                timerPanel.style.display = 'flex';
+                totalTime = media.duration;
+                resetTimer();
+
+                // 如果是瑜珈圖片，顯示警告卡片
+                if (media.type === 'image' && media.name.includes('瑜珈')) {
+                    yogaWarning.style.display = 'block';
+                } else {
+                    yogaWarning.style.display = 'none';
+                }
+            } else {
                 timerPanel.style.display = 'none';
+                yogaWarning.style.display = 'none';
             }
 
             modal.classList.add('active');
@@ -2389,9 +2428,12 @@
             startBtn.disabled = true;
             startBtn.style.opacity = '0.5';
 
-            // 播放倒數背景音樂
+            // 檢查是否保留影片聲音
+            const keepVideoSound = currentMedia && currentMedia.keepVideoSound;
+
+            // 只有不保留影片聲音時才播放倒數背景音樂
             const countdownMusic = document.getElementById('countdownMusic');
-            if (countdownMusic) {
+            if (countdownMusic && !keepVideoSound) {
                 countdownMusic.currentTime = 0;
                 countdownMusic.volume = 0.5;
                 countdownMusic.play().catch(error => {
@@ -2399,9 +2441,9 @@
                 });
             }
 
-            // 將影片靜音
+            // 只有不保留影片聲音時才將影片靜音
             const modalVideo = document.getElementById('modalVideo');
-            if (modalVideo) {
+            if (modalVideo && !keepVideoSound) {
                 modalVideo.muted = true;
                 console.log('影片已靜音');
             }
