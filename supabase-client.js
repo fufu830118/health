@@ -72,3 +72,45 @@ async function markQuestionAsAppeared(questionId) {
     console.log('題目已標記為appeared:', questionId);
     return true;
 }
+
+// 取得題目統計資料（總題數、各類別題數）
+async function getQuestionStats() {
+    try {
+        // 取得所有題目
+        const { data, error } = await supabaseClient
+            .from('questions')
+            .select('category, appeared');
+
+        if (error) {
+            console.error('取得題目統計失敗:', error);
+            return null;
+        }
+
+        // 統計資料
+        const stats = {
+            total: data.length,
+            answered: data.filter(q => q.appeared).length,
+            categories: {}
+        };
+
+        // 統計各類別
+        data.forEach(question => {
+            const category = question.category;
+            if (!stats.categories[category]) {
+                stats.categories[category] = {
+                    total: 0,
+                    answered: 0
+                };
+            }
+            stats.categories[category].total++;
+            if (question.appeared) {
+                stats.categories[category].answered++;
+            }
+        });
+
+        return stats;
+    } catch (error) {
+        console.error('取得題目統計錯誤:', error);
+        return null;
+    }
+}

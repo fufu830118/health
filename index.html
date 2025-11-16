@@ -1146,6 +1146,95 @@
             box-shadow: 0 6px 16px rgba(239, 68, 68, 0.7);
         }
 
+        /* =========== 答題進度顯示器 =========== */
+        .progress-widget {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 280px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 999;
+            transition: all 0.3s ease;
+        }
+
+        .progress-widget:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .progress-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .progress-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+            margin: 0.8rem 0;
+        }
+
+        .progress-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 0.6rem 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-stat-label {
+            color: var(--text-primary);
+        }
+
+        .progress-stat-value {
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+        }
+
+        .category-progress {
+            font-size: 0.85rem;
+            margin: 0.4rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-name {
+            color: var(--text-secondary);
+        }
+
+        .category-count {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
         /* =========== 響應式設計 =========== */
         @media (max-width: 768px) {
             .button-container {
@@ -1173,6 +1262,18 @@
 
             .shortcuts-hint p {
                 font-size: 0.9rem;
+            }
+
+            .progress-widget {
+                bottom: 1rem;
+                right: 1rem;
+                width: 240px;
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+
+            .progress-title {
+                font-size: 1rem;
             }
 
             .video-grid {
@@ -1330,6 +1431,41 @@
                     <p>
                         按 <span class="key-badge">1</span> ~ <span class="key-badge">5</span> 選擇類別，連按兩次相同數字鍵進入
                     </p>
+                </div>
+            </div>
+
+            <!-- 答題進度顯示器 -->
+            <div class="progress-widget" id="progressWidget">
+                <div class="progress-title">
+                    <i class="fas fa-chart-bar"></i>
+                    答題進度
+                </div>
+
+                <div class="progress-divider"></div>
+
+                <div class="progress-stat">
+                    <span class="progress-stat-label">總題數</span>
+                    <span class="progress-stat-value" id="totalQuestions">315 題</span>
+                </div>
+
+                <div class="progress-stat">
+                    <span class="progress-stat-label">已答題</span>
+                    <span class="progress-stat-value" id="answeredQuestions">0 題</span>
+                </div>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                </div>
+
+                <div class="progress-stat">
+                    <span class="progress-stat-label">完成度</span>
+                    <span class="progress-stat-value" id="progressPercentage">0%</span>
+                </div>
+
+                <div class="progress-divider"></div>
+
+                <div id="categoryProgressList">
+                    <!-- 類別進度將由 JavaScript 動態生成 -->
                 </div>
             </div>
         </div>
@@ -1564,6 +1700,9 @@
                 questionMusic.pause();
                 stopSpeaking();
                 bgMusic.play().catch(e => console.log('主選單音樂播放失敗:', e));
+
+                // 更新答題進度
+                updateProgressWidget();
             } else if (pageName === 'page-question') {
                 // 進入題目頁面：停止主選單音樂,播放答題音樂
                 bgMusic.pause();
@@ -1789,6 +1928,45 @@
                 console.error('載入類別失敗:', error);
                 const container = document.getElementById('categoriesContainer');
                 container.innerHTML = '<p class="text-red-400 text-center">載入題目類別失敗，請重新整理頁面。</p>';
+            }
+        }
+
+        // =========== 答題進度追蹤功能 ===========
+        async function updateProgressWidget() {
+            try {
+                // 從 Supabase 取得統計資料
+                const stats = await getQuestionStats();
+
+                if (!stats) {
+                    console.error('無法取得題目統計');
+                    return;
+                }
+
+                // 更新總進度
+                const totalQuestions = stats.total;
+                const totalAnswered = stats.answered;
+                const percentage = totalQuestions > 0 ? ((totalAnswered / totalQuestions) * 100).toFixed(1) : 0;
+
+                document.getElementById('totalQuestions').textContent = `${totalQuestions} 題`;
+                document.getElementById('answeredQuestions').textContent = `${totalAnswered} 題`;
+                document.getElementById('progressPercentage').textContent = `${percentage}%`;
+                document.getElementById('progressBar').style.width = `${percentage}%`;
+
+                // 更新類別進度列表
+                const categoryProgressList = document.getElementById('categoryProgressList');
+                const categories = Object.keys(stats.categories).sort();
+
+                categoryProgressList.innerHTML = categories.map(category => {
+                    const categoryData = stats.categories[category];
+                    return `
+                        <div class="category-progress">
+                            <span class="category-name">${category}</span>
+                            <span class="category-count">${categoryData.answered}/${categoryData.total}</span>
+                        </div>
+                    `;
+                }).join('');
+            } catch (error) {
+                console.error('更新進度顯示器失敗:', error);
             }
         }
 
@@ -2523,6 +2701,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 載入主選單類別
             loadCategories();
+
+            // 載入答題進度
+            updateProgressWidget();
 
             // 設置快捷鍵
             setupMenuKeyboardShortcuts();
